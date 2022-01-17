@@ -1,0 +1,16 @@
+---
+title: "Process PCE Data"
+author: "Erik Dean"
+date: "1/17/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Description
+
+This RMD processes Personal Consumption Expenditure tables from the BEAs website.  It includes a function to pull from the data with various parameters (e.g. start and end dates, level of items to retrieve, &c.)
+
+
