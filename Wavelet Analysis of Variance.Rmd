@@ -32,6 +32,7 @@ library(vars)
 library(WaveletComp)
 library(wavethresh)
 library(waveslim)
+library(pander)
 
 # set color theme for plots
 
@@ -52,26 +53,15 @@ options(
 
 ## Description
 
-This RMD processes Personal Consumption Expenditure tables from the BEAs website.  It includes a function to pull from the data with various parameters (e.g. start and end dates, level of items to retrieve, &c.)
+This RMD covers analysis of variance using discrete wavelet tranforms.  I'll pull mostly from Gencay et al (2001) and the waveslim package.  The ultimate goal here is to break categorize our inflation data according to fine vs. coarse variance--that is, items whose 'energy' occurs mainly at high frequencies (say, a few months) versus lower frequences (say a couple years). Hopefully, this will give us something like the categories that Gardiner Means produced as administered prices versus market prices.
 
-## Data Source
+The sections that follow, I will...
 
-Here, we're going to be working with the underlying (the detailed) monthly price and quantity data.  These are tables...
-* 2.4.3U. Real Personal Consumption Expenditures by Type of Product, Quantity Indexes
-* 2.4.4U. Price Indexes for Personal Consumption Expenditures by Type of Product
-* 2.4.5U. Personal Consumption Expenditures by Type of Product
+* Import the BEA data (see Process PCE Data.Rmd)
+* Provide code for querying the data
+* Analyze the energy composition of the price data
 
-There's an R API to grab these data but the data comes back without indication of the levels of the items, so I've been running this from CSVs from the website.  To do this, go to:
-
-https://apps.bea.gov/iTable/iTable.cfm?1921=underlying&isuri=1&reqid=19&step=2#1921=underlying&isuri=1&reqid=19&step=2
-
-Then to Section 2, then for each table: click Modify on the right and Monthly and Select All Years.  Then click Download on the right and download as CSV.  Save these in your working directory (use getwd() to check what that is) as 243U.csv, 244U.csv, and 245U.csv.
-
-Note: Table 2.4.5U can be used to calculate weights of the items, though I haven't worked on this yet. For more information, see https://www.bea.gov/help/faq/1006 
-
-Import the tables from CSV and format.  This will produce 3 sets of tables for expenditures, prices, and quantities: the normal table of items (exp, pri, qua), a separate table of aggregates, and a separate table for non-profit institutions serving households (NPISH).
-
-```{r import and format tables, echo = T}
+```{r import and format tables, echo = F}
 
 #clear the stuff
 
@@ -141,12 +131,16 @@ rm(quantities)
 
 ## Query the Data
 
-The following function allows querying the main tables (exp, qua, and pri) based on item levels, where goods and services are level 1; durable goods, nondurable goods, and HH cons exp on services are level 2; and so on.  Often, we'll want the lowest (i.e. most granular level), which can be retrieved with the lowestLevel = T parameter.
+The following function allows querying the main tables (exp, qua, and pri) based on item levels, where goods and services are level 1; durable goods, nondurable goods, and HH cons exp on services are level 2; and so on.  Often, we'll want the lowest (i.e. most granular level), which can be retrieved with the lowestLevel = T parameter.  This is the same as in Process PCE Data.Rmd
 
-```{r make ts function}
+```{r make ts function, echo = F}
 
 makeTimeSeries <- function(df, startDate = "1900-01-01", endDate = "2500-01-01", onlyLowestLevel = T, removeNAs = T){
 
+  #df <- pri
+  #startDate <- "1980-01-01"
+  #endDate = "1990-01-01"
+  
   # make data params actual dates
   startDate = ymd(startDate)
   endDate = ymd(endDate)
@@ -159,14 +153,17 @@ makeTimeSeries <- function(df, startDate = "1900-01-01", endDate = "2500-01-01",
   # if specified start/end date is/are out of bounds, then set it/them to the first/last date
   if (startDate < x[1]) { startDate <- x[1] }
   if (endDate > x[length(x)]) { endDate <- x[length(x)] }
-  sum(x > endDate)
-  cutLateYears <- ncol(df) - sum(x > endDate) + 1
+  
+  cutLateYears <- ncol(df) - sum(x > endDate)
+  
   if(cutLateYears <= ncol(df)){ 
-    df <- df[, -(cutLateYears:ncol(df))] 
+    df <- df[, 1:cutLateYears] 
   }
-  cutEarlyYears <- sum(x < startDate) + 1
+  
+  cutEarlyYears <- sum(x < startDate)
+  
   if(cutEarlyYears > 1){ 
-    df <- df[,-(2:cutEarlyYears)] 
+    df <- df[,-(3:(cutEarlyYears+2))] 
   }
    
   #########################################
@@ -261,12 +258,14 @@ makeTimeSeries <- function(df, startDate = "1900-01-01", endDate = "2500-01-01",
 
 ```
 
-Below is some sample code for ploting a selection from the table.
 
-```{r plot a series}
+```{r plot a series, eval = F}
+
+endDate <- as.Date("2021-11-01")
+startDate <- as.Date("1970-01-01")
 
 # get the table from the function
-quaSeries <- makeTimeSeries(qua)
+quaSeries <- makeTimeSeries(qua, startDate = startDate, endDate = endDate)
 
 # selection an item by number
 i <- 130
@@ -275,34 +274,180 @@ i <- 130
 series <- ts(quaSeries$item[i], start = as.numeric(substr(quaSeries$startDate, 1, 4)), end = as.numeric(substr(quaSeries$endDate, 1, 4)), freq = 12)
 
 # plot the series
-plot(series, main = quaSeries$name[i])
+#plot(series, main = quaSeries$name[i])
 
 ```
 
-Export the tables to CSV.
+## Energy Analysis
 
-```{r save tables to csv}
+Energy is defined as the sum of squared values of a vector.  Energy is proportional to variance, and the discrete wavelet transform is energy (variance) preserving.  Hence the sum of squared values of a time series (x) equals the sum of the sum of squared wavelet scale coefficients (d) across all scales (1-J), including the smooth (s).  Gencay et al. (2001, 125) write this as
+
+$||x||^{2} = \sum_{j = 1}^{J}||d_j||^2 + ||s_J||^2$
+
+Where $||.||^2$ is just the sum of the squared values in the vector.  Hence the sum of the squared values of the original series equals the sum of the squared coefficients of all of the wavelet scales, including the smooth.
+
+Using data from IBM's stock returns in the 1960s, Gencay et al. (2001, 127-8) plot the wavelet energies "normalized by $N^{-1}$," which is to say they take the sum of squared coefficients then divide by length (i.e. number of coefficients) for each scale.  Dividing by number of coefficients is necessary because, by definition, each higher (coarser) scale will have half as many observations as the (finer) scale below it, such that finer scales will typically have higher sums of squared coefficients simply for having much larger numbers of coefficients.  
+
+In terms of choosing the wavelet, the authors also note that as "the length of the wavelet filter increases, the approximation to an ideal band-pass filter improves and therefore the wavelet filter will better capture the variability in the frequency intervals associated with the DWT wavelet coefficients."  Hence, below I will use the LA(8) wavelet, not the Haar (which has length 2).
+
+So the idea here to to see what frequencies have the most energy--which is similar to asking whether the time series has a lot of long-period versus short-period variance. To demonstrate, the following will decompose the energy of the DWT for a single item.  Note, our data has around 745 months.  We may move on to MODWTs later, which don't care about this, but standard DWTs need dyadic lengths ($2^2 = 4$, ($2^3 = 8$, 16, 32, 64, 128, 256, &c.). _However_, partial DWTs (see Gencay et al. 2001, 124) should work just as well and since we really don't care about frequencies beyond a business cycle (which we'll call 128 months at most), then we really just need a sample size divisible by 128.  This means 640 should work for us, although I should note that this will remove some items that don't show up in the series until later.
+
+```{r bar graph of energies}
+
+# get start and end dates to make a series length of 640
+endDate <- as.Date("2021-11-01")
+startDate <- as.Date(endDate) %m-% months(640)
 
 # get the table from the function
-priSeries <- makeTimeSeries(pri)
-quaSeries <- makeTimeSeries(qua)
-expSeries <- makeTimeSeries(exp)
+priSeries <- makeTimeSeries(pri, startDate = startDate, endDate = endDate)
 
-p <- priSeries$item
-colnames(p) <- priSeries$name 
+# start date moves up a month for the difference (below)
+startDate <- as.Date(startDate) %m+% months(1)
 
-q <- quaSeries$item
-colnames(q) <- quaSeries$name
+# selection an item by number
+i <- 50
 
-e <- expSeries$item
-colnames(e) <- expSeries$name
+itemTable <- data.frame()
 
-write.csv(p, "prices.csv")
-write.csv(q, "quantities.csv")
-write.csv(e, "expenditures.csv")
+  # take the first differences (I don't see a particular reason to take logs, although Gencay et al. usually do)
+  diff <- diff(priSeries$item[[i]])
+  
+  # make it a time series (for some reason I could never get it to come out a ts from the function)
+  
+  startYM <- as.character(startDate) # I'm sure there's a better way of doing this, but it works
+  endYM <- as.character(endDate)
+  
+  series <- ts(diff, start = c(substr(startYM, 1, 4), substr(startYM, 6, 7)), end = c(substr(endYM, 1, 4), substr(endYM, 6, 7)), freq = 12)
+  
+  ## (partial) Discrete Wavelet Transform with the LA(8) wavelet
+  priDWT <- dwt(series, "la8", 7)
+  names(priDWT) <- c("d1", "d2", "d3", "d4", "d5", "d6", "d7", "s7")
+  
+  # now compare the energies for each scale (but not the smooth)
+  
+  energies <- vector()
+  
+  for(x in 1:7){
+    energies[x] <- sum(priDWT[[x]]^2)/length(priDWT[[x]])
+  }
+  scaleNames <- c(1:7)
 
-rm(p, q, e, priSeries, quaSeries, expSeries)
+  # plot the energies
+  barplot(energies ~ scaleNames, xlab = "Scale", main = priSeries$name[i])
 
 ```
+
+You can see that eggs have a fairly high degree of energy (the average scale energy, excluding the smooth, across all scales and items came out to about 2, partly raised by extremely high energies for securities commissions). But you can also see that most of that energy is in scales 4 and 5, which (and I'll need to check this to be sure I'm reading it right), corresponds to 16-32 and 32-64 month periods--i.e. we're looking mostly at price changes between about 1-5 years.
+
+## Scale Energies for All Items
+
+The following will produce a table of all (least aggregated) items for this time period, including whether they're durable goods, nondurable goods, or services, and their energies by scale (not including the smooth). The table is ordered by d1 energy (that is, the energy of the finest scale, which I believe represents prices changes over 2-4 months).
+
+```{r energies for all items}
+
+# get start and end dates to make a series length of 640
+endDate <- as.Date("2021-11-01")
+startDate <- as.Date(endDate) %m-% months(640)
+
+# get the table from the function
+priSeries <- makeTimeSeries(pri, startDate = startDate, endDate = endDate)
+
+# start date moves up a month for the difference (below)
+startDate <- as.Date(startDate) %m+% months(1)
+
+# selection an item by number
+i <- 1
+
+itemTable <- data.frame()
+
+for(i in 1:(length(priSeries$level))){
+
+  # take the first differences (I don't see a particular reason to take logs, although Gencay et al. usually do)
+  diff <- diff(priSeries$item[[i]])
+  
+  # make it a time series (for some reason I could never get it to come out a ts from the function)
+  
+  startYM <- as.character(startDate) # I'm sure there's a better way of doing this, but it works
+  endYM <- as.character(endDate)
+  
+  series <- ts(diff, start = c(substr(startYM, 1, 4), substr(startYM, 6, 7)), end = c(substr(endYM, 1, 4), substr(endYM, 6, 7)), freq = 12)
+  
+  ## (partial) Discrete Wavelet Transform with the LA(8) wavelet
+  priDWT <- dwt(series, "la8", 7)
+  names(priDWT) <- c("d1", "d2", "d3", "d4", "d5", "d6", "d7", "s7")
+  
+  # now compare the energies for each scale (but not the smooth)
+  
+  energies <- vector()
+  
+  for(x in 1:7){
+    energies[x] <- sum(priDWT[[x]]^2)/length(priDWT[[x]])
+  }
+  scaleNames <- c(1:7)
+
+  # item category (durable good, nondurable good, or service)
+  cn <- substr(priSeries$level[i], 1, 3)
+  if(cn == "1.1"){ cat <- "Durable Good"}
+  else if(cn == "1.2"){ cat <- "Nondurable Good"}
+  else if(cn == "2.1"){ cat <- "Service"}
+
+  itemTable <- rbind(itemTable, c(priSeries$name[i], cat, energies))
+  class(itemTable[, 3])
+  # plot the energies
+  #barplot(energies ~ scaleNames, xlab = "Scale", main = priSeries$name[i])
+
+  
+  
+}
+
+colnames(itemTable) <- c("Item", "Category", "d1.energy", "d2.energy", "d3.energy", "d4.energy", "d5.energy", "d6.energy", "d7.energy")
+
+itemTable[, 3:9] <- sapply(itemTable[, 3:9], as.numeric)
+
+avgD1Energy <- mean(as.numeric(itemTable[, 2]))
+
+avgAllEnergy <- mean(itemTable[, 3:9])
+
+itemTable <- itemTable[order(as.numeric(itemTable$d1.energy)),]
+
+#make the tables
+require(pander)
+panderOptions('table.split.table', Inf)
+panderOptions('digits', 6)
+panderOptions('round', 5)
+pander(itemTable, style = 'rmarkdown')
+
+
+```
+
+The following simply gives the items' ranks in terms of energies at each scale (where rank 1 indicates lowest energy among all items at that scale).  The table is ordered by the fourth scale.
+
+```{r rank items by scale energies}
+
+# produce a data.frame of all the items from above with their 
+# ranks in terms of energy at each scale
+
+itemEnergyRanks <- itemTable
+
+for(i in 3:9){
+  itemEnergyRanks <- itemEnergyRanks[order(as.numeric(itemEnergyRanks[, i])),]
+  itemEnergyRanks <- cbind(itemEnergyRanks, 1:nrow(itemEnergyRanks))
+}
+
+itemEnergyRanks <- itemEnergyRanks[, -(3:9)]
+
+itemEnergyRanks <- itemEnergyRanks[order(itemEnergyRanks[, 6]),]
+
+colnames(itemEnergyRanks)[3:9] <- c("d1en.rank", "d2en.rank", "d3en.rank", "d4en.rank", "d5en.rank", "d6en.rank", "d7en.rank")
+
+#make the tables
+require(pander)
+panderOptions('table.split.table', Inf)
+panderOptions('digits', 6)
+panderOptions('round', 4)
+pander(itemEnergyRanks, style = 'rmarkdown')
+
+```
+
 
 
