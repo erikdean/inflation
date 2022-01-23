@@ -159,14 +159,17 @@ makeTimeSeries <- function(df, startDate = "1900-01-01", endDate = "2500-01-01",
   # if specified start/end date is/are out of bounds, then set it/them to the first/last date
   if (startDate < x[1]) { startDate <- x[1] }
   if (endDate > x[length(x)]) { endDate <- x[length(x)] }
-  sum(x > endDate)
-  cutLateYears <- ncol(df) - sum(x > endDate) + 1
+  
+  cutLateYears <- ncol(df) - sum(x > endDate)
+  
   if(cutLateYears <= ncol(df)){ 
-    df <- df[, -(cutLateYears:ncol(df))] 
+    df <- df[, 1:cutLateYears] 
   }
-  cutEarlyYears <- sum(x < startDate) + 1
+  
+  cutEarlyYears <- sum(x < startDate)
+  
   if(cutEarlyYears > 1){ 
-    df <- df[,-(2:cutEarlyYears)] 
+    df <- df[,-(3:(cutEarlyYears+2))] 
   }
    
   #########################################
@@ -266,7 +269,7 @@ Below is some sample code for ploting a selection from the table.
 ```{r plot a series}
 
 # get the table from the function
-quaSeries <- makeTimeSeries(qua)
+priSeries <- makeTimeSeries(pri)
 
 # selection an item by number
 i <- 130
@@ -275,7 +278,7 @@ i <- 130
 series <- ts(quaSeries$item[i], start = as.numeric(substr(quaSeries$startDate, 1, 4)), end = as.numeric(substr(quaSeries$endDate, 1, 4)), freq = 12)
 
 # plot the series
-plot(series, main = quaSeries$name[i])
+plot(series, main = quaSeries$name[i], ylab = "Price")
 
 ```
 
