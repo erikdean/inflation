@@ -202,9 +202,6 @@ shares <- data.frame("Item" = purchVal$Item, "Prod.Share" = (prodVal$Prod.Val / 
                      "Wholesale.Share" = (wholesale$Wholesale / purchVal$Purch.Val),
                      "Retail.Share" = (retail$Retail / purchVal$Purch.Val))
 
-shares[61:75, 1]
-pcePrice[62:78, 2]
-
 # delete items that don't show up in both
 
 # 17 in the bridge, Telephone and facsimie equipment not in PCE
@@ -353,3 +350,11 @@ ggplot(rt, aes(x = (Pan.Avg.Chg - Pre.Pan.Avg.Chg), y = Retail.Share)) +
 
 ```
 
+```{r regression}
+
+reg <- lm((masterTable$Pan.Avg.Chg - masterTable$Pre.Pan.Avg.Chg) ~ masterTable$Transport.Share +
+          masterTable$Wholesale.Share + masterTable$Retail.Share)
+
+summary(reg)
+
+```
