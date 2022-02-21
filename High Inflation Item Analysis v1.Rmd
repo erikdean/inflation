@@ -1,0 +1,724 @@
+---
+title: "High Inflation Item Analysis"
+author: "Erik Dean"
+date: "02/16/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+# don't output warnings, code, messages in markdown
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, echo = F) 
+
+# import packages we need (and maybe some we don't). 
+# run install.packages("") on each of these if you haven't before
+
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(broom)
+library(lubridate)
+library(gtsummary)
+library(tidyverse)
+library(plotly)
+library(reshape)
+library(viridis)
+library(tibble)
+library(forecast)
+library(quantmod)
+library(fpp3)
+library(zoo)
+library(vars)
+library(WaveletComp)
+library(wavethresh)
+library(waveslim)
+library(pander)
+
+# set color theme for plots
+
+scale_colour_brewer_d <- function(...) {
+  scale_colour_brewer(palette = "Dark2", ...)
+}
+
+scale_fill_brewer_d <- function(...) {
+  scale_fill_brewer(palette = "Dark2", ...)
+}
+
+options(
+  ggplot2.discrete.colour = scale_colour_brewer_d,
+  ggplot2.discrete.fill = scale_fill_brewer_d
+)
+
+```
+
+## Description
+
+This RMD will look in some detail at the items that have had unusually high price changes in the pandemic.
+
+## Data
+
+The following code (not shown in markdown) will import and format the BEA data from csv tables.  All of this is duplicated from Wavelet Analysis of Variance v2.
+
+```{r import and format tables, echo = F}
+
+#clear the stuff
+
+rm(list = ls())
+
+# import the tables
+
+expenditures <- read.csv("245U.csv", header = F, na.strings = "---")
+prices <- read.csv("244U.csv", header = F, na.strings = "---")
+quantities <- read.csv("243U.csv", header = F, na.strings = "---")
+
+# format expenditures tables
+
+  # remove title rows (1:4) and footnotes (410:414)
+  exp <- expenditures[5:413, ]
+  
+  # move aggregates to separate table
+  aggExp <- exp[c(3, 369:409), ]
+  exp <- exp[-c(3, 369:409), ]
+  
+  # move non-profit institutions serving households (NPISHs) to separate table
+  npishExp <- exp[341:367, ]
+  exp <- exp[-(341:367), ]
+  
+  # combine month and year data into 2nd row
+  exp[2,3:ncol(exp)] <- as.character(my(paste0(exp[2,3:ncol(exp)], " ", exp[1,3:ncol(exp)])))
+  exp <- exp[-1,]
+  exp[1, 2] <- "Date"
+
+  # add the date rows to the other tables
+  aggExp <- rbind(exp[1,], aggExp)
+  npishExp <- rbind(exp[1,], npishExp)
+
+# format prices tables (same as above)
+
+  pri <- prices[5:413, ]
+  aggPri <- pri[c(3, 369:409), ]
+  pri <- pri[-c(3, 369:409), ]
+  npishPri <- pri[341:367, ]
+  pri <- pri[-(341:367), ]
+  pri[2,3:ncol(pri)] <- as.character(my(paste0(pri[2,3:ncol(pri)], " ", pri[1,3:ncol(pri)])))
+  pri <- pri[-1,]
+  pri[1, 2] <- "Date"
+  aggPri <- rbind(pri[1,], aggPri)
+  npishPri <- rbind(pri[1,], npishPri)
+
+# format qua tables (same as above)
+
+  qua <- quantities[5:413, ]
+  aggQua <- qua[c(3, 369:409), ]
+  qua <- qua[-c(3, 369:409), ]
+  npishQua <- qua[341:367, ]
+  qua <- qua[-(341:367), ]
+  qua[2,3:ncol(qua)] <- as.character(my(paste0(qua[2,3:ncol(qua)], " ", qua[1,3:ncol(qua)])))
+  qua <- qua[-1,]
+  qua[1, 2] <- "Date"
+  aggQua <- rbind(qua[1,], aggQua)
+  npishQua <- rbind(qua[1,], npishQua)
+  
+# remove the original tables
+  
+rm(expenditures)
+rm(prices)
+rm(quantities)
+  
+```
+
+### Query the Data
+
+The following function (not shown in markdown) allows querying the main tables (exp, qua, and pri) based on item levels, where goods and services are level 1; durable goods, nondurable goods, and HH cons exp on services are level 2; and so on.  Often, we'll want the lowest (i.e. most granular level), which can be retrieved with the lowestLevel = T parameter.  This is the same as in Process PCE Data.Rmd
+
+```{r make ts function, echo = F}
+
+makeTimeSeries <- function(df, startDate = "1900-01-01", endDate = "2500-01-01", onlyLowestLevel = T, removeNAs = T){
+
+  #df <- pri
+  #startDate <- "1980-01-01"
+  #endDate = "1990-01-01"
+  
+  # make data params actual dates
+  startDate = ymd(startDate)
+  endDate = ymd(endDate)
+  
+  #########################################
+  # adjust start and end dates
+  
+  x <- ymd(df[1, 3:ncol(df)]) # get the dates from the tables
+
+  # if specified start/end date is/are out of bounds, then set it/them to the first/last date
+  if (startDate < x[1]) { startDate <- x[1] }
+  if (endDate > x[length(x)]) { endDate <- x[length(x)] }
+  
+  cutLateYears <- ncol(df) - sum(x > endDate)
+  
+  if(cutLateYears <= ncol(df)){ 
+    df <- df[, 1:cutLateYears] 
+  }
+  
+  cutEarlyYears <- sum(x < startDate)
+  
+  if(cutEarlyYears > 1){ 
+    df <- df[,-(3:(cutEarlyYears+2))] 
+  }
+   
+  #########################################
+  # remove rows with NAs
+  # this will ensure that levels that have sub-levels but not full data for them get marked as the lowest level
+  # but those lower levels will be dropped. usually, NAs are due to new products, 
+  # so what gets cut out here will depend on the time frame, which is why I've run the start/end dates cut prior to this
+  
+  if (removeNAs){ df <- na.omit(df) }
+  
+  ############################################
+  ### create a new level system for categories
+  
+  # find number of preceding spaces (the function tells us position of first non-space, so subtract one from that)
+  # (and there are 4 spaces for each additional levels, so divide by 4)
+  numSpac <- (regexpr("[A-Z0-9]", df[, 2]) - 1) / 4
+  
+  n <- 2 # start off on the 2nd row, the first is a header row 
+  # current level (higher number means lower sublevel), there won't be a 9th level, it's there so the 2nd loop doesn't throw NAs
+  cl <- c(0, 0, 0, 0, 0, 0, 0, 0, 0) 
+  upLvl <- 0 # goes up by one if we move back to a higher category level
+  lp <- 1 # current position in level
+  
+  level <- vector("list", nrow(df)) # this will be the actual level code
+  level[[1]] <- "Level"
+  lowestLevel <- vector("list", nrow(df)) # this will indicate if the current level has no sub-levels
+  lowestLevel[[1]] <- "lowestLevel"
+
+  while (n <= nrow(df)){
+    if (numSpac[n] > numSpac[n-1]){ # move to sublevel, set previous row's lowestLevel to 0, and zero out upLvl
+      lp <- lp + 1  
+    }
+    else if (numSpac[n] < numSpac[n-1]){ # move to higher level
+      lp <- lp - (numSpac[n-1] - numSpac[n]) # determine level position based on how far we dropped back
+      cl[lp+1:8] <- 0 # zero out levels to right of this higher level
+
+    }
+    cl[lp] <- cl[lp] + 1
+    
+    level[n] <- paste(cl[1], cl[2], cl[3], cl[4], cl[5], cl[6], cl[7], cl[8], cl[9], sep = ".")
+    n <- n + 1
+  }
+  
+  # add the level column to the tables
+  df <- add_column(df, "Level" = level, .after = 1)
+  
+  n <- 2
+  while (n < nrow(df)){  
+    # if the first zero in the current row appears earlier than in the next row, then the next item is a sublevel and this one isn't the lowest
+    if (str_locate(df$Level[n], "0")[1] < str_locate(df$Level[n+1], "0")[1]){
+      lowestLevel[n] <- 0
+    } else { lowestLevel[n] <- 1 }
+    n <- n + 1
+  }
+  # the loop won't pick up the last the row so do that manually
+  # it should always be 'other household services', which is a lowest level
+  lowestLevel[nrow(df)] <- 1
+  
+  # add the lowestLevel column to the tables
+  df <- add_column(df, "lowestLevel" = lowestLevel, .after = 2)
+  
+  # move first row to column names
+  names(df) <- as.character(unlist(df[1,]))
+  colnames(df)[2] <- "Category"
+  
+  # create bridge between level number and product category
+  if (onlyLowestLevel) { df  <- df[df$lowestLevel == 1, ] }
+  bridgeLvlCat <- df[,c(1, 2, 4)]
+  df <- df[-1,]
+  bridgeLvlCat <- bridgeLvlCat[-1,]
+  
+  # make level numbers row names
+  row.names(df) <- df[,2]
+
+  # transpose and pare down the base tables to only include the lowest levels
+  # if a category has sub-levels those are included but not the higher level (that the lower ones aggregate to)
+
+  df <- as.data.frame(t(df[,-(1:4)]))
+  df[,] <- as.numeric(unlist(df[,]))
+
+  # make the time series
+  df.ts <- ts(df, start = c(substr(startDate, 1, 4), substr(startDate, 6, 7)), end = c(substr(endDate, 1, 4), substr(endDate, 6, 7)), freq = 12)
+
+  # remove stuff
+  #rm(level, cl, lp, n, numSpac, upLvl, lowestLevel, cutEarlyYears, cutLateYears, startDate, endDate, x, onlyLowestLevel, removeNAs)
+
+  output <- list(item = df, level = as.character(bridgeLvlCat[, 2]), name = trimws(bridgeLvlCat[, 3]), 
+                 line = bridgeLvlCat[, 1], startDate = startDate, endDate = endDate)
+
+  return(output)
+}
+
+```
+
+
+## Build Data
+
+This will build the itemClass table that's the same in Wavelet Analysis of Variance v2.RMD.
+
+* Note, I'm skipping the energy analysis here, which has a start date in 1989.  The WaveletAnalysis of Variance v.2.RMD has an errot, in that it sets the start date to 1983, but uses the original 1989 priSeries &c. data frames.  The two start dates give different numbers of series, so they don't actually work together.
+
+```{r set start and end dates for subsequent MODWT analysis}
+
+# From here on out we'll use MODWTs so we can take the full data going back to 1983
+
+# get start and end dates to make a series length of 640
+endDate <- as.Date("2021-11-01")
+startDate <- as.Date("1983-01-01")
+
+# get the table from the function
+# note: i'm going to grab the qua and exp data here for later use
+priSeries <- makeTimeSeries(pri, startDate = startDate, endDate = endDate)
+quaSeries <- makeTimeSeries(qua, startDate = startDate, endDate = endDate)
+expSeries <- makeTimeSeries(exp, startDate = startDate, endDate = endDate)
+
+```
+
+```{r p-q correlations for all items}
+
+coTable <- data.frame() # this will collect all the correlation information
+
+for(i in 1:length(priSeries$level)){  
+  
+  # take the first log differences
+  diffPri <- diff(log(priSeries$item[[i]]))
+  diffQua <- diff(log(quaSeries$item[[i]]))
+    
+  # make it a time series (for some reason I could never get it to come out a ts from the function)
+  startYM <- as.character(startDate) # I'm sure there's a better way of doing this, but it works
+  endYM <- as.character(endDate)
+    
+  seriesPri <- ts(diffPri, start = c(substr(startYM, 1, 4), substr(startYM, 6, 7)), end = c(substr(endYM, 1, 4), substr(endYM, 6, 7)), freq = 12)
+  seriesQua <- ts(diffQua, start = c(substr(startYM, 1, 4), substr(startYM, 6, 7)), end = c(substr(endYM, 1, 4), substr(endYM, 6, 7)), freq = 12)
+  
+  seriesQua
+  # do a basic regression between price and quantity
+  reg <- lm(seriesPri ~ seriesQua)
+  regSum <- summary(reg)
+  regBeta <- regSum$coefficients[2,1]
+  regSum$coefficients[2,4]
+  regP <- regSum$coefficients[2,4]
+  
+  # wavelet cross correlation analysis
+  
+  wf <- "la8"
+  n <- length(seriesPri)
+  J <- 6
+  
+  priModwt <- modwt(seriesPri, wf, n.levels = J)
+  priModwt.bw <- brick.wall(priModwt, wf)
+  
+  quaModwt <- modwt(seriesQua, wf, n.levels = J)
+  quaModwt.bw <- brick.wall(quaModwt, wf)
+  
+  # cross correlation
+  
+  lmax <- 36
+  cross.cor <- NULL
+  
+  for(y in 1:(J+1)) {
+    scOutput <- spin.correlation(priModwt.bw[[y]], quaModwt.bw[[y]], lmax)
+    cross.cor <- cbind(cross.cor, scOutput)
+  }
+  
+  cross.cor <- ts(as.matrix(cross.cor), start=-36, freq=1)
+  
+  dimnames(cross.cor) <- list(NULL, paste("Scale", 1:(J+1)))
+  
+  lags <- length(-lmax:lmax)
+  
+  # calculate 95% confidence intervals
+  lower.ci <- tanh(atanh(cross.cor) - qnorm(0.975) / sqrt(matrix(trunc(n/2^(1:(J+1))), nrow=lags, ncol=J+1, byrow=TRUE) - 3))
+  upper.ci <- tanh(atanh(cross.cor) + qnorm(0.975) / sqrt(matrix(trunc(n/2^(1:(J+1))), nrow=lags, ncol=J+1, byrow=TRUE) - 3))
+
+  zeroTable <- NULL
+  lagTable <- NULL
+    
+  for (x in 1:(J+1)){
+      
+      # find correlation at zero lag, if cor != within 95% CI
+      #i <-5
+      zeroLagCor <- 0
+      if (lower.ci[37,x] > 0 | upper.ci[37,x] < 0){
+        
+        zeroLagCor <- cross.cor[37,x]
+        
+        # zero out all months around the zero lag so they don't get picked up as a lag 
+        z <- 1
+        while (z < 37){
+          if (lower.ci[37-z,x] > 0 | upper.ci[37-z,x] < 0){
+            cross.cor[37-z,x] <- 0
+          } else{ z <- 37 }     
+          z <- z + 1
+        }
+        z <- 1
+        while (z < 37){
+          if (lower.ci[37+z,x] > 0 | upper.ci[37+z,x] < 0){
+            cross.cor[37+z,x] <- 0
+          } else{ z <- 37 }        
+          z <- z + 1
+        }
+        
+      }
+      zeroTable <- rbind(zeroTable, c(x, zeroLagCor))
+      
+      # find highest lagged correlation where zero is outside of CI
+      hiLagCor <- 0
+      hiLagTime <- 0
+      #cross.cor <- cbind(cross.cor, 1:73)
+      
+      n1 <- n2 <- n3 <- 0
+      x1 <- x2 <- x3 <- 0
+      
+      which(upper.ci[-(37), x] < 0)
+      # find significant lags with negative correlations (but exclude the zero lag position)
+      n1 <- which(upper.ci[-(37), x] < 0) # positions in ci table
+      n2 <- which.min(cross.cor[n1, x]) # position of min from those positions
+      n3 <- cross.cor[n1[n2], x] # value
+      # find significant lags with positive correlations (but exclude the zero lag position)
+      x1 <- which(upper.ci[-(37), x] < 0) # positions in ci table
+      x2 <- which.min(cross.cor[x1, x]) # position of min from those positions
+      x3 <- cross.cor[x1[x2], x] # value
+
+      # determine which is bigger, the negative correlation or the positive
+      
+      if(length(n1) > 0 & length(x1) > 0){ # if we came up with both a positive and negative number, test for which is bigger
+        if(abs(x3) >= abs(n3)){ 
+          hiLagCor <- x3
+          hiLagTime <- x1[x2] - 37
+        } else{
+          hiLagCor <- n3
+          hiLagTime <- n1[n2] - 37
+        }
+      } else{ # if only one value came back, then use that one
+        if(length(n1) > 0){
+          hiLagCor <- n3
+          hiLagTime <- n1[n2] - 37
+        } else if(length(x1)) {
+          hiLagCor <- x3
+          hiLagTime <- x1[x2] - 37
+        }
+      }
+
+      lagTable <- rbind(lagTable, c(x, hiLagCor, hiLagTime))
+  }
+  
+  lagTable[!is.finite(lagTable)] <- 0
+  coTable <- rbind(coTable, c(priSeries$name[i], regBeta, regP, t(zeroTable[,2]), t(lagTable[,2]), t(lagTable[,3])))
+}
+
+output <- as.data.frame(coTable)
+output[ , 2:((3*J)+4)] <- apply(output[ ,2:((3*J)+4)], 2, function(x) as.numeric(as.character(x)))
+
+# name the columns
+colnames(output)[1:3] <- c("Item", "regBeta", "regP")
+for(i in 1:J){
+  colnames(output)[i+3] <- paste0("s", i, "Cor")
+  colnames(output)[(i)+4+J] <- paste0("s", i, "LagCor")
+  colnames(output)[(i)+5+J+J] <- paste0("s", i, "LagTime")
+
+}
+colnames(output)[4+J] <- "smoothCor"
+colnames(output)[5+J+J] <- "smoothLagCor"
+colnames(output)[6+J+J+J] <- "smoothLagTime"
+
+
+tableCors <- output[order(output$regP), 1:(4+J)]
+tableLags <- output[order(output$s1LagCor), -(2:(4+J))]
+
+
+#make the tables
+require(pander)
+panderOptions('table.split.table', Inf)
+panderOptions('digits', 6)
+panderOptions('round', 4)
+#pander(tableCors, style = 'rmarkdown')
+
+panderOptions('table.split.table', Inf)
+panderOptions('digits', 6)
+panderOptions('round', 4)
+#pander(tableLags, style = 'rmarkdown')
+
+```
+
+```{r pandemic price change}
+
+ppc <- data.frame("Item" = priSeries$name, "Pan.Price.Pct.Chg" = 0)
+pad <- data.frame("Item" = priSeries$name, "Pan.Avg.Chg" = 0, "Pre.Pan.Avg.Chg" = 0)
+
+# calculate number of months between Jan 2020 and end date of series
+d = round(as.numeric(difftime(as.Date(priSeries$endDate), as.Date("2020-01-01"), units ="days"))/(365.25/12))
+
+for (i in 1:length(priSeries$name)){
+  
+    ppc[i, 2] <- ((priSeries$item[[i]][length(priSeries$item[[i]])] - priSeries$item[[i]][(length(priSeries$item[[i]]) - d +1)]) /
+      priSeries$item[[i]][(length(priSeries$item[[i]]) - d +1)]) * 100
+    
+    dp <- ((priSeries$item[[i]] - lag(priSeries$item[[i]])) / lag(priSeries$item[[i]])) * 100
+    avgPan <- mean(dp[(length(dp)-d+1):length(dp)]) 
+    avgPre <- mean(dp[(length(dp)-d-119):(length(dp)-d)]) 
+    
+    pad[i, 2] <- avgPan
+    pad[i, 3] <- avgPre
+}
+
+hist(ppc[,2], breaks = 25, main = "Percent Price Change from Jan 2020 to Most Recent Month (Nov 2021)")
+ppc <- ppc[order(ppc$Pan.Price.Pct.Chg),]
+ppc[180:217,]
+
+plot(ppc[,2], main = "% Price change during Pandemic")
+
+hist(pad[,2], breaks = 25, main = "% Change in Avg Monthly Change in Pandemic")
+pad <- pad[order(abs(pad$Pan.Avg.Chg)),]
+#pad[180:192,]
+
+hist(pad[,3], breaks = 25, main = "% Change in Avg Monthly Change in Decade before Pandemic")
+pad <- pad[order(abs(pad$Pre.Pan.Avg.Chg)),]
+#pad[180:192,]
+
+plot(pad[,2] ~ pad[,3], xlab = "Monthly Change Pre-Pandemic", ylab = "Monthly Change During Pandemic")
+abline(coef = c(0,1))
+
+```
+
+```{r classification table}
+
+# sort the relevant tables by item name
+#itemTable <- itemTable[order(itemTable$Item),]
+#e1st2Scales <- e1st2Scales[order(e1st2Scales$Item),]
+#eRatio1to5 <- eRatio1to5[order(eRatio1to5$Item),]
+tableCors <- tableCors[order(tableCors$Item),]
+tableLags <- tableLags[order(tableLags$Item),]
+ppc <- ppc[order(ppc$Item),]
+pad <- pad[order(pad$Item),]
+
+#itemClass <- data.frame("Item" = itemTable$Item, "Category" = itemTable$Category, "Energy.1st.2.Details" = 0, 
+#                        "Ratio.1st5th.Energies" = 0, "Highest.Cor" = 0, 
+#                        "Scale.of.Highest.Cor" = 0, "Highest.Lag.Cor" = 0, 
+#                        "Scale.of.Highest.Lag.Cor" = 0, "Lag.of.Highest.Lag.Cor" = 0, "Pan.Price.Chg" = ppc[,2],
+#                        "Reg.Beta" = 0, "Reg.P" = 0, "Pan.Avg.Chg" = 0, "Pre.Pan.Avg.Chg" = 0, "d1Cor" = tableCors$s1Cor)
+
+itemClass <- data.frame("Item" = tableCors$Item, "Highest.Cor" = 0, "Scale.of.Highest.Cor" = 0, 
+                        "Highest.Lag.Cor" = 0, "Scale.of.Highest.Lag.Cor" = 0, "Lag.of.Highest.Lag.Cor" = 0, 
+                        "Pan.Price.Chg" = ppc[,2], "Reg.Beta" = 0, "Reg.P" = 0, "Pan.Avg.Chg" = 0, "Pre.Pan.Avg.Chg" = 0, "d1Cor" = tableCors$s1Cor)
+
+for (i in 1:nrow(itemClass)){
+  
+  # find highest correlation from details (not including smooth)
+  x <- which.max(abs(tableCors[i,4:9]))
+  itemClass[i, 2] <- tableCors[i, x+3]
+  itemClass[i, 3] <- x
+  
+  # find highest lagged correlation from details (not including smooth)
+  x <- which.max(abs(tableLags[i,2:7]))
+  itemClass[i, 4] <- tableLags[i, x+1]
+  itemClass[i, 5] <- x
+  itemClass[i, 6] <- tableLags[i, x+8]
+
+  # copy pandemic price change
+  itemClass[i, 7] <- ppc[i, 2]
+  
+  # copy the simple regression stats
+  itemClass[i, 8] <- tableCors[i, 2]
+  itemClass[i, 9] <- tableCors[i, 3]
+  
+  # copy pandemic avg price change change
+  itemClass[i, 10] <- pad[i, 2]
+  itemClass[i, 11] <- pad[i, 3]
+  
+  # d1 correlation
+  itemClass[i, 12] <- tableCors[i, 4]
+}
+
+itemClass <- itemClass[order(abs(itemClass$Pan.Price.Chg)),]
+
+panderOptions('table.split.table', Inf)
+panderOptions('digits', 6)
+panderOptions('round', 4)
+#pander(itemClass, style = 'rmarkdown')
+
+```
+
+```{r plot pre versus post pandemic price change 2}
+
+ggplot(itemClass, aes(x = Pre.Pan.Avg.Chg, y = Pan.Avg.Chg, color = abs(Highest.Cor))) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(itemClass$Item, 1, 15), 
+      nudge_x = 0.005, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+#    ylim(0, 1000) +
+#    xlim(-1, -0.5) +
+    ggtitle("1. Full") +
+    geom_abline(intercept = 0, slope = 1) +
+    geom_abline(intercept = -0.5, slope = 1) +
+    geom_abline(intercept = 0.5, slope = 1)
+
+ggplot(itemClass, aes(x = Pre.Pan.Avg.Chg, y = Pan.Avg.Chg, color = abs(Highest.Cor))) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(itemClass$Item, 1, 15), 
+      nudge_x = 0.005, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+    ylim(-1.2, 2.6) +
+    xlim(-0.75, 0.75) +
+    ggtitle("2. Zoom") +
+    geom_abline(intercept = 0, slope = 1) +
+    geom_abline(intercept = -0.5, slope = 1) +
+    geom_abline(intercept = 0.5, slope = 1)
+
+ggplot(itemClass, aes(x = Pre.Pan.Avg.Chg, y = Pan.Avg.Chg, color = abs(Highest.Cor))) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(itemClass$Item, 1, 15), 
+      nudge_x = 0.005, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+    ylim(-0.5, 2.2) +
+    xlim(-0.2, 0.4) +
+    ggtitle("3. Zoom More") +
+    geom_abline(intercept = 0, slope = 1) +
+    geom_abline(intercept = -0.5, slope = 1) +
+    geom_abline(intercept = 0.5, slope = 1)
+  
+
+```
+
+As a first pass, I want to grab only those items whose pandemic average monthly percentage price change was 0.5 above the average in the decade prior to the pandemic.  Here they are, including the wavelet correlation (P & Q) for the first detail (2-4 months).
+
+```{r high inflation items}
+
+hiInfItems <- itemClass[itemClass$Pan.Avg.Chg > (itemClass$Pre.Pan.Avg.Chg + 0.5), ]
+
+
+#make the table
+require(pander)
+panderOptions('table.split.table', Inf)
+panderOptions('digits', 4)
+panderOptions('round', 5)
+pander(hiInfItems[, c(1, 10, 11, 12)], style = 'rmarkdown')
+
+
+```
+
+## Analysis Using Continuous Wavelet Transforms
+
+Whether using discrete or continuous wavelet transforms, wavelet analysis is, in essence, a way to characterize the "spectral characteristics of a time-series as a function of time, revealing how the different periodic components of a particular time-series evolve over time," (Aguiar-Conraria and Soares 2011, 478). Whereas Fourier transforms show the frequency distribution of a whole series, wavelets can locate power at various frequencies for particular times in the series.  This is done by projecting a wavelet at different scales, s, (widths) and translations, $\tau$ (time locations) onto the series, $x_t$.  Hence, the continuous wavelet transform with respect to a chosen wavelet function $\psi$ can be expressed as:
+
+$$W_x(\tau, s) = \int x_t \left[\frac{1}{\sqrt{|s|}}\bar\psi \left(\frac{t-\tau}{s} \right) \right]$$
+
+with the bar denoting complex conjugation (Auigar-Conraria and Soares 2011, 479). As we will ultimately be looking at synchronism between price and quantity for our Personal Consumption Expenditure items, an analytic wavelet is appropriate.  As Aquiar-Conraria and Soares (2011, 479) note, "Analytic wavelets
+are ideal for the analysis of oscillatory signals, since the continuous analytic wavelet transform provides an estimate of the instantaneous amplitude and instantaneous phase of the signal in the vicinity of each time/scale location ($\tau$, s)." Following those same authors, we utilize the Morlet wavelet, given by 
+
+$$\psi_{\omega_0}(t) = \pi^{-1/4}e^{i\omega_0t}e^{-\frac{t^2}{2}}$$
+
+See Aquiar-Conraria and Soares (2011, 479) for the advantages of using this wavelet.
+
+Once the wavelet is chosen, it is possible to calculate wavelet power spectra showing the distribution of variance in terms of both scale (frequency) and time.  Furthermore, wavelet coherency between two time-series can be calculated (see Aguiar-Conraria and Soares 2011, 49-80 for more information).
+
+(Note: the authors develop a system for comparing 'distance' between two wavelet spectra which they'll use for cluster analysis.  We might want to try this at some point, though it would be essentially similar, I think, to the DWT stuff we did.  A good check at the least, but possibly just a superior approach.)
+
+
+[Wavecomp looks like a significant extension of the Aguiar... stuff.  Lots of good examples in its documentation]
+
+
+
+
+
+
+
+
+Here are the Continuous Wavelet Transform plots for those items.
+
+
+
+
+
+
+
+
+
+
+
+
+```{r CWT plots, results = "hide"}
+
+#install.packages("WaveletComp")
+library(WaveletComp)
+
+hiP <- 0
+hiQ <- 0
+names <- 0
+
+for (i in 1:nrow(hiInfItems)){
+  hiP <- cbind(hiP, priSeries$item[priSeries$name == hiInfItems$Item[i]])
+  hiQ <- cbind(hiQ, quaSeries$item[quaSeries$name == hiInfItems$Item[i]])
+  names <- rbind(names, hiInfItems$Item[i])
+}
+
+hiP <- hiP[, -(1)]
+hiQ <- hiQ[, -(1)]
+names <- names[-(1)]
+
+for (selection in 1:ncol(hiP)){
+
+#for (selection in (1:2)){
+ 
+  
+  dlP <- diff(log(hiP[, selection]))
+  dlQ <- diff(log(hiQ[, selection]))
+  
+  # note: it only likes date this way
+  priTest <- data.frame(date = as.Date(rownames(hiP)), x = hiP[,selection], y = hiQ[,selection])
+  
+  test <- analyze.coherency(priTest, my.pair = c("x", "y"),
+                          #loess.span = 48/512, # this will detrend (4 year span)
+                          dt = 1, # number of observations per time unit (i'm using 1 month = 1 month)
+                          dj = 1/250,  # resolution (technically y-axis resolution)
+                          lowerPeriod = 2,  # not sure I'm picking these right
+                          upperPeriod = 128,
+                          make.pval = TRUE, 
+                          verbose = F,
+                          n.sim = 3) # number of simulations
+
+  # plot the original series
+  par(mar = c(5, 4, 4, 4) + 0.3)                                  # Additional space for second y-axis
+  plot(hiQ[,selection], pch = 16, col = "red", main = trimws(names[selection]), ylab = "Quantity (red)", type = "l")    # Create first plot   
+  par(new = TRUE)   
+  plot(hiP[,selection], pch = 17, col = "blue", axes = FALSE, xlab = "", ylab = "", type = "l")  # Create second plot without axes
+  axis(side = 4, at = pretty(range(hiP[,selection])))             # Add second axis
+  mtext("Price (blue)", side = 4, line = 3)               # Add second axis label
+  
+  #plot(hiP[,selection], main = trimws(names[selection]), ylab = "Price", type = "l")
+  #plot(hiQ[,selection], main = trimws(names[selection]), ylab = "Quantity", type = "l")
+
+  # plot the wavelet power spectra for price and quantity
+  wt.image(test, my.series = "x", show.date = T, main = paste0(trimws(names[selection]), "-Price"))
+  wt.image(test, my.series = "y", show.date = T, main = paste0(trimws(names[selection]), "-Quantity"))
+  
+  # plot the spectral thingy 
+  wc.image(test, n.levels = 250,
+           legend.params = list(lab = "cross-wavelet (P & Q) power levels"),
+           timelab = "", periodlab = "period (months)",
+           show.date = T,  main = trimws(names[selection]))
+  
+  # plot the time-averaged cross-wavelet power (red dots indicate the period is significant)
+  wc.avg(test, siglvl = 0.01, sigcol = "red", sigpch = 20,
+          periodlab = "period (months)",  main = trimws(names[selection]))
+}
+
+```
+
