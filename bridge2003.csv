@@ -1,0 +1,772 @@
+"PCE Bridge Table, 2003",,,,,,,,,
+[Millions of dollars],,,,,,,,,
+Bureau of Economic Analysis,,,,,,,,,
+,,,,Producers' Value,Transportation Costs,            Trade Margins,,Purchasers' Value,
+NIPA Line,PCE Category,Commodity Code,Commodity Description,,,Wholesale,Retail,,Year
+5,New motor vehicles ,3361MV,"Motor vehicles, bodies and trailers, and parts","195,595","3,403","8,793","43,816","251,607",2003
+6,Net purchases of used motor vehicles ,Used,"Scrap, used and secondhand goods","64,741","3,390","1,305","36,354","105,790",2003
+7,Motor vehicles parts and accessories ,327,Nonmetallic mineral products,35,4,3,29,71,2003
+7,Motor vehicles parts and accessories ,331,Primary metals,13,0,1,11,25,2003
+7,Motor vehicles parts and accessories ,332,Fabricated metal products,42,1,6,35,83,2003
+7,Motor vehicles parts and accessories ,333,Machinery,0,0,0,0,1,2003
+7,Motor vehicles parts and accessories ,334,Computer and electronic products,4,0,1,4,9,2003
+7,Motor vehicles parts and accessories ,335,"Electrical equipment, appliances, and components","1,335",13,146,"1,128","2,622",2003
+7,Motor vehicles parts and accessories ,3361MV,"Motor vehicles, bodies and trailers, and parts","11,024",143,939,"9,312","21,417",2003
+7,Motor vehicles parts and accessories ,339,Miscellaneous manufacturing,195,25,39,164,423,2003
+7,Motor vehicles parts and accessories ,325,Chemical products,295,6,24,114,439,2003
+7,Motor vehicles parts and accessories ,326,Plastics and rubber products,"9,131",173,"1,111","7,644","18,059",2003
+7,Motor vehicles parts and accessories ,Used,"Scrap, used and secondhand goods","-1,351",20,548,"1,755",973,2003
+9,Furniture and furnishings ,321,Wood products,"1,198",64,128,"1,119","2,510",2003
+9,Furniture and furnishings ,327,Nonmetallic mineral products,"2,188",268,545,860,"3,861",2003
+9,Furniture and furnishings ,331,Primary metals,123,3,11,219,355,2003
+9,Furniture and furnishings ,332,Fabricated metal products,325,7,64,577,973,2003
+9,Furniture and furnishings ,334,Computer and electronic products,871,12,137,814,"1,833",2003
+9,Furniture and furnishings ,335,"Electrical equipment, appliances, and components","2,029",259,436,"1,916","4,640",2003
+9,Furniture and furnishings ,337,Furniture and related products,"39,265","5,004","2,438","35,233","81,940",2003
+9,Furniture and furnishings ,339,Miscellaneous manufacturing,"3,942",494,790,"3,346","8,572",2003
+9,Furniture and furnishings ,313TT,Textile mills and textile product mills,"9,476",351,"3,092","9,202","22,121",2003
+9,Furniture and furnishings ,315AL,Apparel and leather and allied products,79,3,24,74,180,2003
+9,Furniture and furnishings ,323,Printing and related support activities,27,1,2,25,55,2003
+9,Furniture and furnishings ,326,Plastics and rubber products,315,6,61,232,613,2003
+9,Furniture and furnishings ,532RL,Rental and leasing services and lessors of intangible assets,"1,758",0,0,0,"1,758",2003
+9,Furniture and furnishings ,Used,"Scrap, used and secondhand goods",397,"3,311",676,"2,344","6,728",2003
+10,Household appliances ,331,Primary metals,27,1,2,15,45,2003
+10,Household appliances ,333,Machinery,"2,765",59,795,"1,652","5,272",2003
+10,Household appliances ,335,"Electrical equipment, appliances, and components","18,200",894,"2,709","11,183","32,986",2003
+10,Household appliances ,326,Plastics and rubber products,42,1,12,87,142,2003
+10,Household appliances ,Used,"Scrap, used and secondhand goods",-82,462,20,95,495,2003
+11,"Glassware, tableware and household utensils ",321,Wood products,887,46,93,292,"1,318",2003
+11,"Glassware, tableware and household utensils ",327,Nonmetallic mineral products,"6,060",722,"1,859","3,142","11,782",2003
+11,"Glassware, tableware and household utensils ",331,Primary metals,"1,169",25,104,385,"1,682",2003
+11,"Glassware, tableware and household utensils ",332,Fabricated metal products,"5,616",120,"1,385","1,866","8,987",2003
+11,"Glassware, tableware and household utensils ",339,Miscellaneous manufacturing,929,10,183,306,"1,427",2003
+11,"Glassware, tableware and household utensils ",326,Plastics and rubber products,"10,032",178,962,"3,303","14,475",2003
+11,"Glassware, tableware and household utensils ",Used,"Scrap, used and secondhand goods",447,529,209,466,"1,649",2003
+12,Tools and equipment for house and garden ,321,Wood products,12,1,1,21,35,2003
+12,Tools and equipment for house and garden ,327,Nonmetallic mineral products,385,77,37,149,648,2003
+12,Tools and equipment for house and garden ,331,Primary metals,13,0,1,24,38,2003
+12,Tools and equipment for house and garden ,332,Fabricated metal products,"1,312",28,380,"2,329","4,050",2003
+12,Tools and equipment for house and garden ,333,Machinery,"1,738",37,349,"3,091","5,215",2003
+12,Tools and equipment for house and garden ,334,Computer and electronic products,35,1,2,63,101,2003
+12,Tools and equipment for house and garden ,335,"Electrical equipment, appliances, and components",105,1,23,187,315,2003
+12,Tools and equipment for house and garden ,337,Furniture and related products,112,15,37,329,493,2003
+12,Tools and equipment for house and garden ,339,Miscellaneous manufacturing,233,30,75,431,769,2003
+12,Tools and equipment for house and garden ,313TT,Textile mills and textile product mills,17,1,3,50,70,2003
+12,Tools and equipment for house and garden ,325,Chemical products,948,19,95,410,"1,472",2003
+12,Tools and equipment for house and garden ,326,Plastics and rubber products,73,1,10,215,300,2003
+12,Tools and equipment for house and garden ,532RL,Rental and leasing services and lessors of intangible assets,"4,990",0,0,0,"4,990",2003
+12,Tools and equipment for house and garden ,Used,"Scrap, used and secondhand goods",85,76,32,69,262,2003
+14,"Video, audio, photographic, and information processing equipment and media ",333,Machinery,"2,798",59,"1,238","1,194","5,289",2003
+14,"Video, audio, photographic, and information processing equipment and media ",334,Computer and electronic products,"56,303",592,"8,564","20,216","85,674",2003
+14,"Video, audio, photographic, and information processing equipment and media ",335,"Electrical equipment, appliances, and components","2,041",20,439,715,"3,216",2003
+14,"Video, audio, photographic, and information processing equipment and media ",339,Miscellaneous manufacturing,0,0,0,0,0,2003
+14,"Video, audio, photographic, and information processing equipment and media ",315AL,Apparel and leather and allied products,9,0,2,7,19,2003
+14,"Video, audio, photographic, and information processing equipment and media ",511,"Publishing industries, except internet (includes software)","11,008",103,"1,649","3,969","16,729",2003
+14,"Video, audio, photographic, and information processing equipment and media ",512,Motion picture and sound recording industries,"22,313",220,"4,429","3,616","30,578",2003
+14,"Video, audio, photographic, and information processing equipment and media ",514,"Data processing, internet publishing, and other information services",0,0,0,0,0,2003
+14,"Video, audio, photographic, and information processing equipment and media ",Used,"Scrap, used and secondhand goods",12,161,30,66,269,2003
+15,"Sporting equipment, supplies, guns, and ammunition ",331,Primary metals,23,0,2,15,40,2003
+15,"Sporting equipment, supplies, guns, and ammunition ",332,Fabricated metal products,"2,598",56,855,"1,667","5,176",2003
+15,"Sporting equipment, supplies, guns, and ammunition ",3364OT,Other transportation equipment,"4,357",43,135,"1,188","5,724",2003
+15,"Sporting equipment, supplies, guns, and ammunition ",339,Miscellaneous manufacturing,"13,613","1,718","4,590","9,214","29,135",2003
+15,"Sporting equipment, supplies, guns, and ammunition ",313TT,Textile mills and textile product mills,"1,253",51,365,820,"2,489",2003
+15,"Sporting equipment, supplies, guns, and ammunition ",315AL,Apparel and leather and allied products,181,7,55,119,362,2003
+15,"Sporting equipment, supplies, guns, and ammunition ",325,Chemical products,"1,021",22,117,668,"1,829",2003
+15,"Sporting equipment, supplies, guns, and ammunition ",Used,"Scrap, used and secondhand goods",0,211,36,69,315,2003
+16,Sports and recreational vehicles ,332,Fabricated metal products,9,0,3,5,17,2003
+16,Sports and recreational vehicles ,333,Machinery,193,4,26,102,325,2003
+16,Sports and recreational vehicles ,335,"Electrical equipment, appliances, and components",4,0,0,2,6,2003
+16,Sports and recreational vehicles ,3361MV,"Motor vehicles, bodies and trailers, and parts","9,938",112,282,"2,712","13,043",2003
+16,Sports and recreational vehicles ,3364OT,Other transportation equipment,"15,727",158,"1,239","6,798","23,923",2003
+16,Sports and recreational vehicles ,326,Plastics and rubber products,420,8,51,339,818,2003
+16,Sports and recreational vehicles ,Used,"Scrap, used and secondhand goods",-41,"2,081",271,603,"2,914",2003
+17,Recreational books ,323,Printing and related support activities,193,7,16,69,284,2003
+17,Recreational books ,511,"Publishing industries, except internet (includes software)","17,726",637,"1,603","6,264","26,230",2003
+17,Recreational books ,514,"Data processing, internet publishing, and other information services",0,0,0,0,0,2003
+18,Musical instruments,339,Miscellaneous manufacturing,"2,159",277,430,"1,810","4,675",2003
+18,Musical instruments,315AL,Apparel and leather and allied products,92,3,18,77,191,2003
+18,Musical instruments,Used,"Scrap, used and secondhand goods",-36,146,13,74,197,2003
+20,Jewelry and watches ,334,Computer and electronic products,"3,146",32,619,"2,425","6,222",2003
+20,Jewelry and watches ,339,Miscellaneous manufacturing,"22,616",234,"4,441","17,505","44,797",2003
+20,Jewelry and watches ,Used,"Scrap, used and secondhand goods",-399,569,175,565,910,2003
+21,Therapeutic appliances and equipment,334,Computer and electronic products,"1,605",16,396,"1,507","3,524",2003
+21,Therapeutic appliances and equipment,335,"Electrical equipment, appliances, and components",497,6,106,469,"1,078",2003
+21,Therapeutic appliances and equipment,339,Miscellaneous manufacturing,"11,317",112,"2,746","11,102","25,278",2003
+21,Therapeutic appliances and equipment,621,Ambulatory health care services,"6,600",0,0,0,"6,600",2003
+21,Therapeutic appliances and equipment,Used,"Scrap, used and secondhand goods",2,2,1,3,7,2003
+22,Educational books,511,"Publishing industries, except internet (includes software)","6,459",231,601,"2,293","9,583",2003
+22,Educational books,514,"Data processing, internet publishing, and other information services",0,0,0,0,0,2003
+22,Educational books,Used,"Scrap, used and secondhand goods",0,185,18,68,271,2003
+23,Luggage and similar personal items ,321,Wood products,251,9,76,235,572,2003
+23,Luggage and similar personal items ,339,Miscellaneous manufacturing,"1,496",193,487,482,"2,658",2003
+23,Luggage and similar personal items ,315AL,Apparel and leather and allied products,"6,537",234,"1,394","4,449","12,614",2003
+24,Telephone and facsimile equipment ,334,Computer and electronic products,"2,470",24,419,"4,626","7,540",2003
+27,Food and nonalcoholic beverages purchased for off-premises consumption ,111CA,Farms,"31,684","2,450","9,139","14,647","57,919",2003
+27,Food and nonalcoholic beverages purchased for off-premises consumption ,113FF,"Forestry, fishing, and related activities","2,628",187,216,"1,026","4,057",2003
+27,Food and nonalcoholic beverages purchased for off-premises consumption ,212,"Mining, except oil and gas",41,11,2,19,73,2003
+27,Food and nonalcoholic beverages purchased for off-premises consumption ,311FT,Food and beverage and tobacco products,"277,652","5,488","40,237","129,140","452,516",2003
+27,Food and nonalcoholic beverages purchased for off-premises consumption ,325,Chemical products,387,10,32,180,609,2003
+27,Food and nonalcoholic beverages purchased for off-premises consumption ,Used,"Scrap, used and secondhand goods","-1,596",0,0,0,"-1,596",2003
+28,Alcoholic beverages purchased for off-premises consumption,311FT,Food and beverage and tobacco products,"42,895",997,"23,194","18,642","85,728",2003
+29,Food produced and consumed on farms ,111CA,Farms,275,0,0,0,275,2003
+32,Womens and girls clothing ,339,Miscellaneous manufacturing,51,6,17,59,133,2003
+32,Womens and girls clothing ,313TT,Textile mills and textile product mills,208,8,60,240,515,2003
+32,Womens and girls clothing ,315AL,Apparel and leather and allied products,"55,645","2,014","12,261","64,366","134,286",2003
+32,Womens and girls clothing ,Used,"Scrap, used and secondhand goods",-231,"1,237",137,722,"1,865",2003
+33,Mens and boys clothing ,339,Miscellaneous manufacturing,99,12,33,74,219,2003
+33,Mens and boys clothing ,313TT,Textile mills and textile product mills,508,18,151,382,"1,059",2003
+33,Mens and boys clothing ,315AL,Apparel and leather and allied products,"39,930","1,430","9,905","30,054","81,319",2003
+33,Mens and boys clothing ,Used,"Scrap, used and secondhand goods",-127,186,45,136,241,2003
+34,Childrens and infants clothing ,313TT,Textile mills and textile product mills,194,7,59,238,498,2003
+34,Childrens and infants clothing ,315AL,Apparel and leather and allied products,"3,046",109,661,"3,481","7,296",2003
+34,Childrens and infants clothing ,322,Paper products,"2,012",74,164,"2,465","4,715",2003
+34,Childrens and infants clothing ,Used,"Scrap, used and secondhand goods",-17,245,55,289,572,2003
+35,Other clothing materials and footwear ,339,Miscellaneous manufacturing,243,10,8,73,334,2003
+35,Other clothing materials and footwear ,313TT,Textile mills and textile product mills,"1,977",72,258,"1,783","4,089",2003
+35,Other clothing materials and footwear ,315AL,Apparel and leather and allied products,"18,491",665,"6,917","21,935","48,008",2003
+35,Other clothing materials and footwear ,511,"Publishing industries, except internet (includes software)",44,2,4,40,89,2003
+35,Other clothing materials and footwear ,Used,"Scrap, used and secondhand goods",-31,28,15,46,57,2003
+37,"Motor vehicle fuels, lubricants, and fluids ",324,Petroleum and coal products,"85,886","2,961","46,306","43,821","178,974",2003
+37,"Motor vehicle fuels, lubricants, and fluids ",325,Chemical products,2,0,0,1,3,2003
+38,Fuel oil and other fuels ,212,"Mining, except oil and gas",47,16,3,21,87,2003
+38,Fuel oil and other fuels ,321,Wood products,122,7,24,58,211,2003
+38,Fuel oil and other fuels ,324,Petroleum and coal products,"8,069",379,"2,495","5,209","16,152",2003
+38,Fuel oil and other fuels ,325,Chemical products,623,18,51,294,985,2003
+40,Pharmaceutical and other medical products ,339,Miscellaneous manufacturing,824,8,203,991,"2,026",2003
+40,Pharmaceutical and other medical products ,324,Petroleum and coal products,51,2,5,62,120,2003
+40,Pharmaceutical and other medical products ,325,Chemical products,"111,460","1,947","26,590","77,656","217,653",2003
+40,Pharmaceutical and other medical products ,326,Plastics and rubber products,88,2,27,259,375,2003
+41,Recreational items ,111CA,Farms,"13,979",907,"2,754","5,290","22,931",2003
+41,Recreational items ,212,"Mining, except oil and gas",14,4,1,10,29,2003
+41,Recreational items ,335,"Electrical equipment, appliances, and components",127,1,27,95,250,2003
+41,Recreational items ,339,Miscellaneous manufacturing,"15,030","1,933","4,949","18,322","40,234",2003
+41,Recreational items ,311FT,Food and beverage and tobacco products,"12,758",249,"2,463","9,268","24,738",2003
+41,Recreational items ,313TT,Textile mills and textile product mills,20,1,6,14,41,2003
+41,Recreational items ,315AL,Apparel and leather and allied products,201,7,59,146,413,2003
+41,Recreational items ,322,Paper products,"1,329",66,108,615,"2,118",2003
+41,Recreational items ,323,Printing and related support activities,199,7,16,244,466,2003
+41,Recreational items ,325,Chemical products,"1,723",35,828,"1,273","3,859",2003
+41,Recreational items ,326,Plastics and rubber products,332,6,36,284,657,2003
+41,Recreational items ,81,"Other services, except government",144,0,0,0,144,2003
+41,Recreational items ,Used,"Scrap, used and secondhand goods","1,201","1,477",578,"1,660","4,916",2003
+42,Household supplies ,212,"Mining, except oil and gas",495,130,28,191,843,2003
+42,Household supplies ,321,Wood products,740,41,72,343,"1,197",2003
+42,Household supplies ,331,Primary metals,21,1,2,61,84,2003
+42,Household supplies ,332,Fabricated metal products,596,13,84,273,965,2003
+42,Household supplies ,335,"Electrical equipment, appliances, and components","1,547",16,333,"2,751","4,646",2003
+42,Household supplies ,339,Miscellaneous manufacturing,"1,934",181,562,"4,191","6,869",2003
+42,Household supplies ,313TT,Textile mills and textile product mills,"5,823",244,"1,400","15,487","22,953",2003
+42,Household supplies ,315AL,Apparel and leather and allied products,65,2,14,190,271,2003
+42,Household supplies ,322,Paper products,"12,678",552,"1,035","5,878","20,143",2003
+42,Household supplies ,323,Printing and related support activities,657,24,54,"1,626","2,360",2003
+42,Household supplies ,325,Chemical products,"18,463",425,"2,352","7,239","28,478",2003
+42,Household supplies ,326,Plastics and rubber products,"3,148",54,295,"1,688","5,186",2003
+42,Household supplies ,Used,"Scrap, used and secondhand goods",0,2,0,2,3,2003
+43,Personal care products ,332,Fabricated metal products,"1,142",25,350,923,"2,440",2003
+43,Personal care products ,333,Machinery,166,4,22,155,347,2003
+43,Personal care products ,335,"Electrical equipment, appliances, and components","2,050",236,320,"1,920","4,526",2003
+43,Personal care products ,339,Miscellaneous manufacturing,"3,776",484,"1,155","3,053","8,468",2003
+43,Personal care products ,313TT,Textile mills and textile product mills,235,9,71,190,505,2003
+43,Personal care products ,315AL,Apparel and leather and allied products,22,1,5,18,46,2003
+43,Personal care products ,322,Paper products,"2,905",107,237,"3,548","6,796",2003
+43,Personal care products ,325,Chemical products,"26,089",496,"5,619","21,089","53,293",2003
+43,Personal care products ,326,Plastics and rubber products,469,8,99,511,"1,087",2003
+44,Tobacco ,311FT,Food and beverage and tobacco products,"42,866",601,"16,398","10,594","70,459",2003
+45,"Magazines, newspapers, and stationery ",339,Miscellaneous manufacturing,"3,888",498,338,"2,077","6,801",2003
+45,"Magazines, newspapers, and stationery ",322,Paper products,"1,554",55,127,831,"2,567",2003
+45,"Magazines, newspapers, and stationery ",323,Printing and related support activities,991,36,79,530,"1,635",2003
+45,"Magazines, newspapers, and stationery ",325,Chemical products,"1,178",26,96,630,"1,930",2003
+45,"Magazines, newspapers, and stationery ",326,Plastics and rubber products,4,0,1,2,7,2003
+45,"Magazines, newspapers, and stationery ",511,"Publishing industries, except internet (includes software)","30,816","1,112","2,817","4,319","39,064",2003
+45,"Magazines, newspapers, and stationery ",512,Motion picture and sound recording industries,208,2,19,16,246,2003
+45,"Magazines, newspapers, and stationery ",514,"Data processing, internet publishing, and other information services","2,853",0,0,0,"2,853",2003
+45,"Magazines, newspapers, and stationery ",Used,"Scrap, used and secondhand goods",0,18,2,3,23,2003
+46,Net expenditures abroad by U.S. residents ,Other,Noncomparable imports and rest-of-the-world adjustment,"5,451",0,0,0,"5,451",2003
+51,Rental of tenant-occupied nonfarm housing ,HS,Housing,"251,766",0,0,0,"251,766",2003
+52,Imputed rental of owner-occupied nonfarm housing ,HS,Housing,"908,151",0,0,0,"908,151",2003
+53,Rental value of farm dwellings  ,HS,Housing,"13,251",0,0,0,"13,251",2003
+54,Group housing ,721,Accommodation,940,0,0,0,940,2003
+56,Water supply and sanitation ,22,Utilities,"26,406",0,0,0,"26,406",2003
+56,Water supply and sanitation ,562,Waste management and remediation services,"11,848",0,0,0,"11,848",2003
+56,Water supply and sanitation ,GSLE,State and local government enterprises,"18,354",0,0,0,"18,354",2003
+58,Electricity,22,Utilities,"111,476",0,0,0,"111,476",2003
+59,Natural Gas ,22,Utilities,"48,892",0,0,0,"48,892",2003
+62,Physician services ,621,Ambulatory health care services,"291,452",0,0,0,"291,452",2003
+63,Dental services ,621,Ambulatory health care services,"77,817",0,0,0,"77,817",2003
+64,Paramedical services ,532RL,Rental and leasing services and lessors of intangible assets,"1,206",0,0,0,"1,206",2003
+64,Paramedical services ,621,Ambulatory health care services,"179,480",0,0,0,"179,480",2003
+66,Hospitals ,622,Hospitals,"498,438",0,0,0,"498,438",2003
+67,Nursing homes,623,Nursing and residential care facilities,"105,657",0,0,0,"105,657",2003
+70,Motor vehicle maintenance and repair,487OS,Other transportation and support activities,"4,065",0,0,0,"4,065",2003
+70,Motor vehicle maintenance and repair,61,Educational services,10,0,0,0,10,2003
+70,Motor vehicle maintenance and repair,81,"Other services, except government","122,592",0,0,0,"122,592",2003
+71,Other motor vehicle services,532RL,Rental and leasing services and lessors of intangible assets,"38,123",0,0,0,"38,123",2003
+71,Other motor vehicle services,81,"Other services, except government","7,624",0,0,0,"7,624",2003
+71,Other motor vehicle services,GSLE,State and local government enterprises,"5,881",0,0,0,"5,881",2003
+73,Ground transportation,482,Rail transportation,713,0,0,0,713,2003
+73,Ground transportation,485,Transit and ground passenger transportation,"21,572",0,0,0,"21,572",2003
+73,Ground transportation,487OS,Other transportation and support activities,"1,211",0,0,0,"1,211",2003
+73,Ground transportation,561,Administrative and support services,"1,820",0,0,0,"1,820",2003
+74,Air transportation,481,Air transportation,"53,640",0,0,0,"53,640",2003
+75,Water transportation,483,Water transportation,"1,162",0,0,0,"1,162",2003
+75,Water transportation,487OS,Other transportation and support activities,"1,206",0,0,0,"1,206",2003
+77,"Membership clubs, sports centers, parks, theaters, and museums",113FF,"Forestry, fishing, and related activities","2,849",0,0,0,"2,849",2003
+77,"Membership clubs, sports centers, parks, theaters, and museums",481,Air transportation,0,0,0,0,0,2003
+77,"Membership clubs, sports centers, parks, theaters, and museums",512,Motion picture and sound recording industries,"9,860",0,0,0,"9,860",2003
+77,"Membership clubs, sports centers, parks, theaters, and museums",514,"Data processing, internet publishing, and other information services","3,366",0,0,0,"3,366",2003
+77,"Membership clubs, sports centers, parks, theaters, and museums",532RL,Rental and leasing services and lessors of intangible assets,"1,055",0,0,0,"1,055",2003
+77,"Membership clubs, sports centers, parks, theaters, and museums",561,Administrative and support services,"1,497",0,0,0,"1,497",2003
+77,"Membership clubs, sports centers, parks, theaters, and museums",61,Educational services,"11,510",0,0,0,"11,510",2003
+77,"Membership clubs, sports centers, parks, theaters, and museums",711AS,"Performing arts, spectator sports, museums, and related activities","23,740",0,0,0,"23,740",2003
+77,"Membership clubs, sports centers, parks, theaters, and museums",713,"Amusements, gambling, and recreation industries","45,468",0,0,0,"45,468",2003
+77,"Membership clubs, sports centers, parks, theaters, and museums",721,Accommodation,"4,460",0,0,0,"4,460",2003
+78,"Audio-video, photographic, and information processing equipment services",513,Broadcasting and telecommunications,"47,875",0,0,0,"47,875",2003
+78,"Audio-video, photographic, and information processing equipment services",514,"Data processing, internet publishing, and other information services",0,0,0,0,0,2003
+78,"Audio-video, photographic, and information processing equipment services",532RL,Rental and leasing services and lessors of intangible assets,"12,361",0,0,0,"12,361",2003
+78,"Audio-video, photographic, and information processing equipment services",5412OP,"Miscellaneous professional, scientific, and technical services","6,616",0,0,0,"6,616",2003
+78,"Audio-video, photographic, and information processing equipment services",81,"Other services, except government","9,052",0,0,0,"9,052",2003
+79,Gambling,711AS,"Performing arts, spectator sports, museums, and related activities","3,705",0,0,0,"3,705",2003
+79,Gambling,713,"Amusements, gambling, and recreation industries","60,481",0,0,0,"60,481",2003
+79,Gambling,GSLE,State and local government enterprises,"16,947",0,0,0,"16,947",2003
+80,Other recreational services,113FF,"Forestry, fishing, and related activities",339,0,0,0,339,2003
+80,Other recreational services,334,Computer and electronic products,57,1,4,37,99,2003
+80,Other recreational services,5412OP,"Miscellaneous professional, scientific, and technical services","12,904",0,0,0,"12,904",2003
+80,Other recreational services,561,Administrative and support services,"6,253",0,0,0,"6,253",2003
+80,Other recreational services,81,"Other services, except government","8,426",0,0,0,"8,426",2003
+83,Purchased meals and beverages,481,Air transportation,233,0,0,0,233,2003
+83,Purchased meals and beverages,482,Rail transportation,59,0,0,0,59,2003
+83,Purchased meals and beverages,512,Motion picture and sound recording industries,"3,079",0,0,0,"3,079",2003
+83,Purchased meals and beverages,711AS,"Performing arts, spectator sports, museums, and related activities",758,0,0,0,758,2003
+83,Purchased meals and beverages,722,Food services and drinking places,"390,234",0,0,0,"390,234",2003
+84,Food furnished to employees (including military),111CA,Farms,701,57,118,0,876,2003
+84,Food furnished to employees (including military),113FF,"Forestry, fishing, and related activities",31,2,3,0,36,2003
+84,Food furnished to employees (including military),311FT,Food and beverage and tobacco products,"8,001",163,"1,150",0,"9,314",2003
+85,Accommodations ,721,Accommodation,"58,127",0,0,0,"58,127",2003
+88,Financial services furnished without payment,521CI,"Federal Reserve banks, credit intermediation, and related activities","87,914",0,0,0,"87,914",2003
+88,Financial services furnished without payment,525,"Funds, trusts, and other financial vehicles","81,273",0,0,0,"81,273",2003
+89,"Financial service charges, fees, and commissions",521CI,"Federal Reserve banks, credit intermediation, and related activities","72,596",0,0,0,"72,596",2003
+89,"Financial service charges, fees, and commissions",523,"Securities, commodity contracts, and investments","101,191",0,0,0,"101,191",2003
+89,"Financial service charges, fees, and commissions",GFE,Federal government enterprises,176,0,0,0,176,2003
+91,Life insurance,524,Insurance carriers and related activities,"60,397",0,0,0,"60,397",2003
+92,Net household insurance,524,Insurance carriers and related activities,"4,928",0,0,0,"4,928",2003
+93,Net health insurance,524,Insurance carriers and related activities,"116,653",0,0,0,"116,653",2003
+94,Net motor vehicle and other transportation insurance,524,Insurance carriers and related activities,"49,071",0,0,0,"49,071",2003
+97,Telecommunication services,513,Broadcasting and telecommunications,"128,951",0,0,0,"128,951",2003
+97,Telecommunication services,532RL,Rental and leasing services and lessors of intangible assets,181,0,0,0,181,2003
+97,Telecommunication services,561,Administrative and support services,614,0,0,0,614,2003
+97,Telecommunication services,721,Accommodation,699,0,0,0,699,2003
+98,Postal and delivery services,487OS,Other transportation and support activities,"1,710",0,0,0,"1,710",2003
+98,Postal and delivery services,561,Administrative and support services,350,0,0,0,350,2003
+98,Postal and delivery services,GFE,Federal government enterprises,"8,004",0,0,0,"8,004",2003
+98,Postal and delivery services,Used,"Scrap, used and secondhand goods",3,2,1,3,8,2003
+99,Internet access,513,Broadcasting and telecommunications,"17,083",0,0,0,"17,083",2003
+101,Higher education,61,Educational services,"94,981",0,0,0,"94,981",2003
+102,"Nursery, elementary, and secondary schools",61,Educational services,"20,508",0,0,0,"20,508",2003
+102,"Nursery, elementary, and secondary schools",624,Social assistance,"7,188",0,0,0,"7,188",2003
+103,Commercial and vocational schools,61,Educational services,"26,985",0,0,0,"26,985",2003
+104,Professional and other services,327,Nonmetallic mineral products,"1,869",209,182,598,"2,858",2003
+104,Professional and other services,332,Fabricated metal products,40,1,6,13,60,2003
+104,Professional and other services,323,Printing and related support activities,55,2,5,0,62,2003
+104,Professional and other services,4A0,Other retail,645,0,0,0,645,2003
+104,Professional and other services,481,Air transportation,210,0,0,0,210,2003
+104,Professional and other services,5411,Legal services,"79,273",0,0,0,"79,273",2003
+104,Professional and other services,5412OP,"Miscellaneous professional, scientific, and technical services","16,046",0,0,0,"16,046",2003
+104,Professional and other services,561,Administrative and support services,"5,180",0,0,0,"5,180",2003
+104,Professional and other services,81,"Other services, except government","32,503",0,0,0,"32,503",2003
+104,Professional and other services,Other,Noncomparable imports and rest-of-the-world adjustment,298,0,0,0,298,2003
+105,Personal care and clothing services,532RL,Rental and leasing services and lessors of intangible assets,889,0,0,0,889,2003
+105,Personal care and clothing services,61,Educational services,143,0,0,0,143,2003
+105,Personal care and clothing services,721,Accommodation,"4,861",0,0,0,"4,861",2003
+105,Personal care and clothing services,81,"Other services, except government","85,256",0,0,0,"85,256",2003
+106,Social services and religious activities,623,Nursing and residential care facilities,"20,840",0,0,0,"20,840",2003
+106,Social services and religious activities,624,Social assistance,"59,814",0,0,0,"59,814",2003
+106,Social services and religious activities,81,"Other services, except government","17,961",0,0,0,"17,961",2003
+107,Household maintenance,481,Air transportation,45,0,0,0,45,2003
+107,Household maintenance,483,Water transportation,23,0,0,0,23,2003
+107,Household maintenance,484,Truck transportation,"9,508",0,0,0,"9,508",2003
+107,Household maintenance,493,Warehousing and storage,572,0,0,0,572,2003
+107,Household maintenance,ORE,Other real estate,"1,871",0,0,0,"1,871",2003
+107,Household maintenance,532RL,Rental and leasing services and lessors of intangible assets,"1,001",0,0,0,"1,001",2003
+107,Household maintenance,561,Administrative and support services,"18,351",0,0,0,"18,351",2003
+107,Household maintenance,81,"Other services, except government","20,533",0,0,0,"20,533",2003
+109,Foreign travel by U.S. residents,481,Air transportation,"19,595",0,0,0,"19,595",2003
+109,Foreign travel by U.S. residents,483,Water transportation,"8,383",0,0,0,"8,383",2003
+109,Foreign travel by U.S. residents,Other,Noncomparable imports and rest-of-the-world adjustment,"46,294",0,0,0,"46,294",2003
+110,Less: Expenditures in the United States by nonresidents,Other,Noncomparable imports and rest-of-the-world adjustment,"-78,225",0,0,0,"-78,225",2003
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),513,Broadcasting and telecommunications,"2,546",0,0,0,"2,546",2003
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),5411,Legal services,-64,0,0,0,-64,2003
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),5412OP,"Miscellaneous professional, scientific, and technical services","4,188",0,0,0,"4,188",2003
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),61,Educational services,"40,144",0,0,0,"40,144",2003
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),621,Ambulatory health care services,"6,560",0,0,0,"6,560",2003
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),622,Hospitals,"2,599",0,0,0,"2,599",2003
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),623,Nursing and residential care facilities,"7,037",0,0,0,"7,037",2003
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),624,Social assistance,"39,625",0,0,0,"39,625",2003
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),711AS,"Performing arts, spectator sports, museums, and related activities","10,285",0,0,0,"10,285",2003
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),713,"Amusements, gambling, and recreation industries","2,399",0,0,0,"2,399",2003
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),81,"Other services, except government","90,191",0,0,0,"90,191",2003
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,

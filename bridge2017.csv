@@ -1,0 +1,306 @@
+"PCE Bridge Table, 2017",,,,,,,,,
+[Millions of dollars],,,,,,,,,
+Bureau of Economic Analysis,,,,,,,,,
+,,,,Producers' Value,Transportation Costs,            Trade Margins,,Purchasers' Value,
+NIPA Line,PCE Category,Commodity Code,Commodity Description,,,Wholesale,Retail,,Year
+5,New motor vehicles ,3361MV,"Motor vehicles, bodies and trailers, and parts","204,030","3,233","9,667","63,808","280,738",2017
+6,Net purchases of used motor vehicles ,Used,"Scrap, used and secondhand goods","90,476","1,514","3,834","51,286","147,110",2017
+7,Motor vehicles parts and accessories ,327,Nonmetallic mineral products,51,8,7,34,100,2017
+7,Motor vehicles parts and accessories ,331,Primary metals,28,1,3,18,50,2017
+7,Motor vehicles parts and accessories ,332,Fabricated metal products,619,20,248,408,"1,294",2017
+7,Motor vehicles parts and accessories ,333,Machinery,0,0,0,0,0,2017
+7,Motor vehicles parts and accessories ,334,Computer and electronic products,17,0,9,11,38,2017
+7,Motor vehicles parts and accessories ,335,"Electrical equipment, appliances, and components","2,688",27,373,"1,769","4,856",2017
+7,Motor vehicles parts and accessories ,3361MV,"Motor vehicles, bodies and trailers, and parts","18,664",218,"2,531","12,282","33,695",2017
+7,Motor vehicles parts and accessories ,339,Miscellaneous manufacturing,306,42,88,201,637,2017
+7,Motor vehicles parts and accessories ,325,Chemical products,206,4,19,130,360,2017
+7,Motor vehicles parts and accessories ,326,Plastics and rubber products,"16,282",376,"4,092","10,588","31,339",2017
+7,Motor vehicles parts and accessories ,Used,"Scrap, used and secondhand goods",-666,8,"1,225",563,"1,130",2017
+9,Furniture and furnishings ,321,Wood products,"2,801",183,454,"4,215","7,654",2017
+9,Furniture and furnishings ,327,Nonmetallic mineral products,"2,013",299,780,"1,330","4,423",2017
+9,Furniture and furnishings ,331,Primary metals,207,6,22,363,598,2017
+9,Furniture and furnishings ,332,Fabricated metal products,430,13,140,755,"1,338",2017
+9,Furniture and furnishings ,334,Computer and electronic products,989,25,296,"1,530","2,839",2017
+9,Furniture and furnishings ,335,"Electrical equipment, appliances, and components","2,043",281,642,"3,185","6,152",2017
+9,Furniture and furnishings ,337,Furniture and related products,"52,240","7,198","13,212","45,596","118,246",2017
+9,Furniture and furnishings ,339,Miscellaneous manufacturing,"4,386",504,"2,041","4,754","11,685",2017
+9,Furniture and furnishings ,313TT,Textile mills and textile product mills,"8,764",453,"4,910","17,174","31,301",2017
+9,Furniture and furnishings ,315AL,Apparel and leather and allied products,76,3,44,117,240,2017
+9,Furniture and furnishings ,323,Printing and related support activities,228,10,27,353,618,2017
+9,Furniture and furnishings ,326,Plastics and rubber products,181,4,55,317,557,2017
+9,Furniture and furnishings ,532RL,Rental and leasing services and lessors of intangible assets,"7,107",0,0,0,"7,107",2017
+9,Furniture and furnishings ,Used,"Scrap, used and secondhand goods",-29,"2,240","1,102","2,521","5,834",2017
+10,Household appliances ,331,Primary metals,4,0,0,3,7,2017
+10,Household appliances ,333,Machinery,"2,159",68,891,"1,584","4,701",2017
+10,Household appliances ,335,"Electrical equipment, appliances, and components","23,923",959,"7,873","17,390","50,144",2017
+10,Household appliances ,326,Plastics and rubber products,10,0,5,20,35,2017
+10,Household appliances ,Used,"Scrap, used and secondhand goods",-97,25,7,16,-49,2017
+11,"Glassware, tableware and household utensils ",321,Wood products,615,40,89,308,"1,052",2017
+11,"Glassware, tableware and household utensils ",327,Nonmetallic mineral products,"3,884",584,"2,018","2,300","8,786",2017
+11,"Glassware, tableware and household utensils ",331,Primary metals,455,14,49,228,746,2017
+11,"Glassware, tableware and household utensils ",332,Fabricated metal products,"4,188",130,"1,513","2,113","7,944",2017
+11,"Glassware, tableware and household utensils ",339,Miscellaneous manufacturing,127,1,79,64,271,2017
+11,"Glassware, tableware and household utensils ",326,Plastics and rubber products,"12,727",268,"1,697","6,383","21,076",2017
+11,"Glassware, tableware and household utensils ",Used,"Scrap, used and secondhand goods",-469,90,44,40,-294,2017
+12,Tools and equipment for house and garden ,321,Wood products,3,0,0,5,9,2017
+12,Tools and equipment for house and garden ,327,Nonmetallic mineral products,586,160,64,370,"1,181",2017
+12,Tools and equipment for house and garden ,331,Primary metals,9,0,1,17,27,2017
+12,Tools and equipment for house and garden ,332,Fabricated metal products,"1,756",55,747,"3,059","5,617",2017
+12,Tools and equipment for house and garden ,333,Machinery,"3,714",115,857,"6,522","11,208",2017
+12,Tools and equipment for house and garden ,334,Computer and electronic products,226,7,36,396,665,2017
+12,Tools and equipment for house and garden ,335,"Electrical equipment, appliances, and components",106,1,33,186,326,2017
+12,Tools and equipment for house and garden ,337,Furniture and related products,250,37,140,645,"1,072",2017
+12,Tools and equipment for house and garden ,339,Miscellaneous manufacturing,311,43,171,554,"1,079",2017
+12,Tools and equipment for house and garden ,313TT,Textile mills and textile product mills,13,1,7,35,55,2017
+12,Tools and equipment for house and garden ,325,Chemical products,"2,314",66,364,"1,894","4,638",2017
+12,Tools and equipment for house and garden ,326,Plastics and rubber products,106,2,22,274,404,2017
+12,Tools and equipment for house and garden ,532RL,Rental and leasing services and lessors of intangible assets,"3,270",0,0,0,"3,270",2017
+12,Tools and equipment for house and garden ,Used,"Scrap, used and secondhand goods",53,61,22,38,174,2017
+14,"Video, audio, photographic, and information processing equipment and media ",333,Machinery,"1,050",33,"2,220",967,"4,270",2017
+14,"Video, audio, photographic, and information processing equipment and media ",334,Computer and electronic products,"61,042",590,"18,419","29,734","109,786",2017
+14,"Video, audio, photographic, and information processing equipment and media ",335,"Electrical equipment, appliances, and components","1,157",12,364,900,"2,432",2017
+14,"Video, audio, photographic, and information processing equipment and media ",339,Miscellaneous manufacturing,5,1,1,11,18,2017
+14,"Video, audio, photographic, and information processing equipment and media ",315AL,Apparel and leather and allied products,28,1,8,19,56,2017
+14,"Video, audio, photographic, and information processing equipment and media ",511,"Publishing industries, except internet (includes software)","48,835",456,"13,365","10,506","73,161",2017
+14,"Video, audio, photographic, and information processing equipment and media ",512,Motion picture and sound recording industries,"7,301",53,"1,617","6,698","15,669",2017
+14,"Video, audio, photographic, and information processing equipment and media ",514,"Data processing, internet publishing, and other information services","7,093",0,0,0,"7,093",2017
+14,"Video, audio, photographic, and information processing equipment and media ",Used,"Scrap, used and secondhand goods",-16,83,27,30,124,2017
+15,"Sporting equipment, supplies, guns, and ammunition ",331,Primary metals,19,1,2,19,40,2017
+15,"Sporting equipment, supplies, guns, and ammunition ",332,Fabricated metal products,"7,904",241,"3,022","7,607","18,774",2017
+15,"Sporting equipment, supplies, guns, and ammunition ",3364OT,Other transportation equipment,"4,063",43,180,"2,210","6,495",2017
+15,"Sporting equipment, supplies, guns, and ammunition ",339,Miscellaneous manufacturing,"14,733","1,898","5,833","15,517","37,981",2017
+15,"Sporting equipment, supplies, guns, and ammunition ",313TT,Textile mills and textile product mills,"1,311",74,705,"1,315","3,404",2017
+15,"Sporting equipment, supplies, guns, and ammunition ",315AL,Apparel and leather and allied products,129,6,74,129,338,2017
+15,"Sporting equipment, supplies, guns, and ammunition ",325,Chemical products,"1,159",34,149,"1,162","2,504",2017
+15,"Sporting equipment, supplies, guns, and ammunition ",Used,"Scrap, used and secondhand goods",-194,0,0,0,-194,2017
+16,Sports and recreational vehicles ,332,Fabricated metal products,2,0,1,2,5,2017
+16,Sports and recreational vehicles ,333,Machinery,18,1,3,12,33,2017
+16,Sports and recreational vehicles ,335,"Electrical equipment, appliances, and components",7,0,1,4,12,2017
+16,Sports and recreational vehicles ,3361MV,"Motor vehicles, bodies and trailers, and parts","15,638",184,474,"5,575","21,872",2017
+16,Sports and recreational vehicles ,3364OT,Other transportation equipment,"16,199",153,"2,118","9,898","28,369",2017
+16,Sports and recreational vehicles ,326,Plastics and rubber products,"1,278",30,325,835,"2,468",2017
+16,Sports and recreational vehicles ,Used,"Scrap, used and secondhand goods",484,"4,272",769,"1,200","6,724",2017
+17,Recreational books ,323,Printing and related support activities,39,2,5,20,65,2017
+17,Recreational books ,511,"Publishing industries, except internet (includes software)","9,573",432,"1,471","4,880","16,357",2017
+17,Recreational books ,514,"Data processing, internet publishing, and other information services","2,746",0,0,0,"2,746",2017
+18,Musical instruments,339,Miscellaneous manufacturing,"2,150",298,616,"2,452","5,515",2017
+18,Musical instruments,315AL,Apparel and leather and allied products,109,5,31,124,270,2017
+18,Musical instruments,Used,"Scrap, used and secondhand goods",-19,13,4,13,11,2017
+20,Jewelry and watches ,334,Computer and electronic products,"4,215",44,"2,627","5,878","12,764",2017
+20,Jewelry and watches ,339,Miscellaneous manufacturing,"17,141",181,"10,682","24,127","52,131",2017
+20,Jewelry and watches ,Used,"Scrap, used and secondhand goods","1,590","2,044","1,017","2,285","6,935",2017
+21,Therapeutic appliances and equipment,334,Computer and electronic products,"3,345",33,"1,416","3,284","8,077",2017
+21,Therapeutic appliances and equipment,335,"Electrical equipment, appliances, and components",106,4,34,122,266,2017
+21,Therapeutic appliances and equipment,339,Miscellaneous manufacturing,"18,468",180,"6,371","20,133","45,152",2017
+21,Therapeutic appliances and equipment,621,Ambulatory health care services,"12,116",0,0,0,"12,116",2017
+21,Therapeutic appliances and equipment,Used,"Scrap, used and secondhand goods",0,1,0,1,3,2017
+22,Educational books,511,"Publishing industries, except internet (includes software)","4,790",215,747,"2,437","8,188",2017
+22,Educational books,514,"Data processing, internet publishing, and other information services","1,449",0,0,0,"1,449",2017
+22,Educational books,Used,"Scrap, used and secondhand goods",-2,230,32,104,364,2017
+23,Luggage and similar personal items ,321,Wood products,197,9,114,305,625,2017
+23,Luggage and similar personal items ,339,Miscellaneous manufacturing,"1,127",157,586,"1,366","3,236",2017
+23,Luggage and similar personal items ,315AL,Apparel and leather and allied products,"11,158",505,"3,747","9,943","25,354",2017
+24,Telephone and facsimile equipment ,334,Computer and electronic products,"14,587",137,"6,989","7,785","29,497",2017
+27,Food and nonalcoholic beverages purchased for off-premises consumption ,111CA,Farms,"56,283","7,193","14,183","24,618","102,278",2017
+27,Food and nonalcoholic beverages purchased for off-premises consumption ,113FF,"Forestry, fishing, and related activities","3,418",374,264,"1,256","5,312",2017
+27,Food and nonalcoholic beverages purchased for off-premises consumption ,212,"Mining, except oil and gas",18,6,1,8,34,2017
+27,Food and nonalcoholic beverages purchased for off-premises consumption ,311FT,Food and beverage and tobacco products,"446,657","9,515","70,616","203,783","730,571",2017
+27,Food and nonalcoholic beverages purchased for off-premises consumption ,325,Chemical products,599,22,56,273,949,2017
+27,Food and nonalcoholic beverages purchased for off-premises consumption ,Used,"Scrap, used and secondhand goods","-1,480",0,0,0,"-1,480",2017
+28,Alcoholic beverages purchased for off-premises consumption,311FT,Food and beverage and tobacco products,"63,221","1,703","36,227","33,824","134,975",2017
+29,Food produced and consumed on farms ,111CA,Farms,433,0,0,0,433,2017
+32,Womens and girls clothing ,339,Miscellaneous manufacturing,44,4,18,75,141,2017
+32,Womens and girls clothing ,313TT,Textile mills and textile product mills,418,19,239,711,"1,387",2017
+32,Womens and girls clothing ,315AL,Apparel and leather and allied products,"56,241","2,584","21,580","95,810","176,216",2017
+32,Womens and girls clothing ,Used,"Scrap, used and secondhand goods",-283,0,0,0,-283,2017
+33,Mens and boys clothing ,339,Miscellaneous manufacturing,40,2,16,41,100,2017
+33,Mens and boys clothing ,313TT,Textile mills and textile product mills,22,1,12,23,58,2017
+33,Mens and boys clothing ,315AL,Apparel and leather and allied products,"40,045","1,851","17,165","41,614","100,675",2017
+33,Mens and boys clothing ,Used,"Scrap, used and secondhand goods",-254,129,49,118,44,2017
+34,Childrens and infants clothing ,313TT,Textile mills and textile product mills,139,6,80,245,470,2017
+34,Childrens and infants clothing ,315AL,Apparel and leather and allied products,"3,006",136,"1,148","5,121","9,412",2017
+34,Childrens and infants clothing ,322,Paper products,"2,816",133,336,"4,970","8,256",2017
+34,Childrens and infants clothing ,Used,"Scrap, used and secondhand goods",-16,55,18,82,139,2017
+35,Other clothing materials and footwear ,339,Miscellaneous manufacturing,106,15,28,195,344,2017
+35,Other clothing materials and footwear ,313TT,Textile mills and textile product mills,"1,278",58,233,"2,337","3,906",2017
+35,Other clothing materials and footwear ,315AL,Apparel and leather and allied products,"31,342","1,425","12,251","35,112","80,129",2017
+35,Other clothing materials and footwear ,Used,"Scrap, used and secondhand goods",-2,0,0,0,-2,2017
+37,"Motor vehicle fuels, lubricants, and fluids ",324,Petroleum and coal products,"153,980","7,231","59,433","70,358","291,001",2017
+37,"Motor vehicle fuels, lubricants, and fluids ",325,Chemical products,12,0,1,8,21,2017
+38,Fuel oil and other fuels ,212,"Mining, except oil and gas",21,9,1,10,41,2017
+38,Fuel oil and other fuels ,321,Wood products,330,22,94,168,614,2017
+38,Fuel oil and other fuels ,324,Petroleum and coal products,"9,879",515,"3,079","4,237","17,709",2017
+38,Fuel oil and other fuels ,325,Chemical products,337,13,32,171,553,2017
+40,Pharmaceutical and other medical products ,339,Miscellaneous manufacturing,"1,575",15,666,"2,726","4,983",2017
+40,Pharmaceutical and other medical products ,324,Petroleum and coal products,"1,019",47,106,"1,798","2,971",2017
+40,Pharmaceutical and other medical products ,325,Chemical products,"232,642","4,696","96,705","148,707","482,750",2017
+40,Pharmaceutical and other medical products ,326,Plastics and rubber products,204,4,118,526,852,2017
+41,Recreational items ,111CA,Farms,"24,066","2,868","5,122","10,566","42,623",2017
+41,Recreational items ,212,"Mining, except oil and gas",8,3,1,7,19,2017
+41,Recreational items ,335,"Electrical equipment, appliances, and components",14,0,4,10,28,2017
+41,Recreational items ,339,Miscellaneous manufacturing,"21,687","3,046","8,748","28,815","62,297",2017
+41,Recreational items ,311FT,Food and beverage and tobacco products,"21,779",550,"5,293","17,657","45,278",2017
+41,Recreational items ,313TT,Textile mills and textile product mills,23,1,13,19,57,2017
+41,Recreational items ,315AL,Apparel and leather and allied products,434,20,250,352,"1,056",2017
+41,Recreational items ,322,Paper products,339,24,40,234,637,2017
+41,Recreational items ,323,Printing and related support activities,281,13,33,371,698,2017
+41,Recreational items ,325,Chemical products,794,21,"1,025",604,"2,444",2017
+41,Recreational items ,326,Plastics and rubber products,689,15,91,569,"1,363",2017
+41,Recreational items ,81,"Other services, except government","1,294",0,0,0,"1,294",2017
+41,Recreational items ,Used,"Scrap, used and secondhand goods","1,964","3,047","1,513","3,354","9,877",2017
+42,Household supplies ,212,"Mining, except oil and gas",109,41,5,68,224,2017
+42,Household supplies ,321,Wood products,592,39,83,409,"1,123",2017
+42,Household supplies ,332,Fabricated metal products,601,18,125,400,"1,144",2017
+42,Household supplies ,335,"Electrical equipment, appliances, and components","3,440",34,"1,081","6,045","10,600",2017
+42,Household supplies ,339,Miscellaneous manufacturing,"3,673",455,"2,041","8,063","14,232",2017
+42,Household supplies ,313TT,Textile mills and textile product mills,"8,417",521,"3,757","21,077","33,771",2017
+42,Household supplies ,315AL,Apparel and leather and allied products,210,10,80,540,840,2017
+42,Household supplies ,322,Paper products,"14,578",775,"1,739","10,070","27,162",2017
+42,Household supplies ,323,Printing and related support activities,998,45,119,"2,404","3,567",2017
+42,Household supplies ,325,Chemical products,"18,488",443,"3,095","11,780","33,805",2017
+42,Household supplies ,326,Plastics and rubber products,"4,440",90,686,"3,606","8,823",2017
+42,Household supplies ,Used,"Scrap, used and secondhand goods",0,3,0,5,9,2017
+43,Personal care products ,332,Fabricated metal products,"1,887",60,843,"1,864","4,654",2017
+43,Personal care products ,333,Machinery,225,7,46,343,621,2017
+43,Personal care products ,335,"Electrical equipment, appliances, and components","5,929",590,"1,923","4,118","12,560",2017
+43,Personal care products ,339,Miscellaneous manufacturing,"3,462",480,"1,974","3,419","9,336",2017
+43,Personal care products ,313TT,Textile mills and textile product mills,183,8,105,181,477,2017
+43,Personal care products ,315AL,Apparel and leather and allied products,60,3,23,59,144,2017
+43,Personal care products ,322,Paper products,"2,308",111,275,"3,851","6,545",2017
+43,Personal care products ,325,Chemical products,"40,039",856,"15,802","39,537","96,234",2017
+43,Personal care products ,326,Plastics and rubber products,426,9,153,652,"1,240",2017
+44,Tobacco ,311FT,Food and beverage and tobacco products,"49,980",646,"27,867","18,811","97,304",2017
+45,"Magazines, newspapers, and stationery ",339,Miscellaneous manufacturing,"2,679",372,387,"1,033","4,471",2017
+45,"Magazines, newspapers, and stationery ",322,Paper products,502,23,60,193,778,2017
+45,"Magazines, newspapers, and stationery ",323,Printing and related support activities,"3,776",171,449,"1,453","5,849",2017
+45,"Magazines, newspapers, and stationery ",325,Chemical products,"2,691",79,252,"1,035","4,057",2017
+45,"Magazines, newspapers, and stationery ",326,Plastics and rubber products,315,7,65,121,508,2017
+45,"Magazines, newspapers, and stationery ",511,"Publishing industries, except internet (includes software)","22,062",993,"3,162","5,352","31,569",2017
+45,"Magazines, newspapers, and stationery ",512,Motion picture and sound recording industries,117,1,18,17,153,2017
+45,"Magazines, newspapers, and stationery ",514,"Data processing, internet publishing, and other information services","19,908",0,0,0,"19,908",2017
+45,"Magazines, newspapers, and stationery ",Used,"Scrap, used and secondhand goods",0,16,2,5,23,2017
+46,Net expenditures abroad by U.S. residents ,Other,Noncomparable imports and rest-of-the-world adjustment,"6,961",0,0,0,"6,961",2017
+51,Rental of tenant-occupied nonfarm housing ,HS,Housing,"488,485",0,0,0,"488,485",2017
+52,Imputed rental of owner-occupied nonfarm housing ,HS,Housing,"1,526,317",0,0,0,"1,526,317",2017
+53,Rental value of farm dwellings  ,HS,Housing,"20,956",0,0,0,"20,956",2017
+54,Group housing ,721,Accommodation,"1,854",0,0,0,"1,854",2017
+56,Water supply and sanitation ,22,Utilities,"41,797",0,0,0,"41,797",2017
+56,Water supply and sanitation ,562,Waste management and remediation services,"27,299",0,0,0,"27,299",2017
+56,Water supply and sanitation ,GSLE,State and local government enterprises,"31,766",0,0,0,"31,766",2017
+58,Electricity,22,Utilities,"176,217",0,0,0,"176,217",2017
+59,Natural Gas ,22,Utilities,"48,470",0,0,0,"48,470",2017
+62,Physician services ,621,Ambulatory health care services,"543,690",0,0,0,"543,690",2017
+63,Dental services ,621,Ambulatory health care services,"127,516",0,0,0,"127,516",2017
+64,Paramedical services ,532RL,Rental and leasing services and lessors of intangible assets,"2,424",0,0,0,"2,424",2017
+64,Paramedical services ,621,Ambulatory health care services,"356,517",0,0,0,"356,517",2017
+66,Hospitals ,622,Hospitals,"1,026,146",0,0,0,"1,026,146",2017
+67,Nursing homes,623,Nursing and residential care facilities,"182,507",0,0,0,"182,507",2017
+70,Motor vehicle maintenance and repair,487OS,Other transportation and support activities,"13,935",0,0,0,"13,935",2017
+70,Motor vehicle maintenance and repair,61,Educational services,36,0,0,0,36,2017
+70,Motor vehicle maintenance and repair,81,"Other services, except government","166,207",0,0,0,"166,207",2017
+71,Other motor vehicle services,532RL,Rental and leasing services and lessors of intangible assets,"80,796",0,0,0,"80,796",2017
+71,Other motor vehicle services,81,"Other services, except government","12,129",0,0,0,"12,129",2017
+71,Other motor vehicle services,GSLE,State and local government enterprises,"12,825",0,0,0,"12,825",2017
+73,Ground transportation,482,Rail transportation,"1,286",0,0,0,"1,286",2017
+73,Ground transportation,485,Transit and ground passenger transportation,"46,011",0,0,0,"46,011",2017
+73,Ground transportation,487OS,Other transportation and support activities,"1,935",0,0,0,"1,935",2017
+73,Ground transportation,561,Administrative and support services,"4,311",0,0,0,"4,311",2017
+74,Air transportation,481,Air transportation,"97,851",0,0,0,"97,851",2017
+75,Water transportation,483,Water transportation,"1,800",0,0,0,"1,800",2017
+75,Water transportation,487OS,Other transportation and support activities,"1,757",0,0,0,"1,757",2017
+77,"Membership clubs, sports centers, parks, theaters, and museums",113FF,"Forestry, fishing, and related activities","4,904",0,0,0,"4,904",2017
+77,"Membership clubs, sports centers, parks, theaters, and museums",481,Air transportation,0,0,0,0,0,2017
+77,"Membership clubs, sports centers, parks, theaters, and museums",512,Motion picture and sound recording industries,"13,426",0,0,0,"13,426",2017
+77,"Membership clubs, sports centers, parks, theaters, and museums",514,"Data processing, internet publishing, and other information services","4,444",0,0,0,"4,444",2017
+77,"Membership clubs, sports centers, parks, theaters, and museums",532RL,Rental and leasing services and lessors of intangible assets,"3,467",0,0,0,"3,467",2017
+77,"Membership clubs, sports centers, parks, theaters, and museums",561,Administrative and support services,"4,534",0,0,0,"4,534",2017
+77,"Membership clubs, sports centers, parks, theaters, and museums",61,Educational services,"16,927",0,0,0,"16,927",2017
+77,"Membership clubs, sports centers, parks, theaters, and museums",711AS,"Performing arts, spectator sports, museums, and related activities","58,170",0,0,0,"58,170",2017
+77,"Membership clubs, sports centers, parks, theaters, and museums",713,"Amusements, gambling, and recreation industries","86,618",0,0,0,"86,618",2017
+77,"Membership clubs, sports centers, parks, theaters, and museums",721,Accommodation,"7,037",0,0,0,"7,037",2017
+78,"Audio-video, photographic, and information processing equipment services",513,Broadcasting and telecommunications,"104,044",0,0,0,"104,044",2017
+78,"Audio-video, photographic, and information processing equipment services",514,"Data processing, internet publishing, and other information services","19,914",0,0,0,"19,914",2017
+78,"Audio-video, photographic, and information processing equipment services",532RL,Rental and leasing services and lessors of intangible assets,"6,120",0,0,0,"6,120",2017
+78,"Audio-video, photographic, and information processing equipment services",5412OP,"Miscellaneous professional, scientific, and technical services","7,649",0,0,0,"7,649",2017
+78,"Audio-video, photographic, and information processing equipment services",81,"Other services, except government","5,727",0,0,0,"5,727",2017
+79,Gambling,711AS,"Performing arts, spectator sports, museums, and related activities","3,029",0,0,0,"3,029",2017
+79,Gambling,713,"Amusements, gambling, and recreation industries","105,133",0,0,0,"105,133",2017
+79,Gambling,GSLE,State and local government enterprises,"26,447",0,0,0,"26,447",2017
+80,Other recreational services,113FF,"Forestry, fishing, and related activities","1,197",0,0,0,"1,197",2017
+80,Other recreational services,334,Computer and electronic products,59,1,10,59,128,2017
+80,Other recreational services,5412OP,"Miscellaneous professional, scientific, and technical services","33,328",0,0,0,"33,328",2017
+80,Other recreational services,561,Administrative and support services,"14,110",0,0,0,"14,110",2017
+80,Other recreational services,81,"Other services, except government","15,901",0,0,0,"15,901",2017
+83,Purchased meals and beverages,481,Air transportation,579,0,0,0,579,2017
+83,Purchased meals and beverages,482,Rail transportation,178,0,0,0,178,2017
+83,Purchased meals and beverages,512,Motion picture and sound recording industries,"3,660",0,0,0,"3,660",2017
+83,Purchased meals and beverages,711AS,"Performing arts, spectator sports, museums, and related activities",543,0,0,0,543,2017
+83,Purchased meals and beverages,722,Food services and drinking places,"741,150",0,0,0,"741,150",2017
+84,Food furnished to employees (including military),111CA,Farms,747,93,162,0,"1,001",2017
+84,Food furnished to employees (including military),113FF,"Forestry, fishing, and related activities",171,19,14,0,204,2017
+84,Food furnished to employees (including military),311FT,Food and beverage and tobacco products,"17,028",373,"2,425",0,"19,825",2017
+85,Accommodations ,721,Accommodation,"146,403",0,0,0,"146,403",2017
+88,Financial services furnished without payment,521CI,"Federal Reserve banks, credit intermediation, and related activities","179,543",0,0,0,"179,543",2017
+88,Financial services furnished without payment,525,"Funds, trusts, and other financial vehicles","164,181",0,0,0,"164,181",2017
+89,"Financial service charges, fees, and commissions",521CI,"Federal Reserve banks, credit intermediation, and related activities","106,022",0,0,0,"106,022",2017
+89,"Financial service charges, fees, and commissions",523,"Securities, commodity contracts, and investments","230,985",0,0,0,"230,985",2017
+89,"Financial service charges, fees, and commissions",GFE,Federal government enterprises,145,0,0,0,145,2017
+91,Life insurance,524,Insurance carriers and related activities,"91,944",0,0,0,"91,944",2017
+92,Net household insurance,524,Insurance carriers and related activities,"10,506",0,0,0,"10,506",2017
+93,Net health insurance,524,Insurance carriers and related activities,"212,653",0,0,0,"212,653",2017
+94,Net motor vehicle and other transportation insurance,524,Insurance carriers and related activities,"72,978",0,0,0,"72,978",2017
+97,Telecommunication services,513,Broadcasting and telecommunications,"151,203",0,0,0,"151,203",2017
+97,Telecommunication services,532RL,Rental and leasing services and lessors of intangible assets,36,0,0,0,36,2017
+97,Telecommunication services,561,Administrative and support services,172,0,0,0,172,2017
+97,Telecommunication services,721,Accommodation,284,0,0,0,284,2017
+98,Postal and delivery services,487OS,Other transportation and support activities,"6,069",0,0,0,"6,069",2017
+98,Postal and delivery services,561,Administrative and support services,568,0,0,0,568,2017
+98,Postal and delivery services,GFE,Federal government enterprises,"6,091",0,0,0,"6,091",2017
+98,Postal and delivery services,Used,"Scrap, used and secondhand goods",-11,0,0,0,-11,2017
+99,Internet access,513,Broadcasting and telecommunications,"72,460",0,0,0,"72,460",2017
+101,Higher education,61,Educational services,"181,152",0,0,0,"181,152",2017
+102,"Nursery, elementary, and secondary schools",61,Educational services,"33,442",0,0,0,"33,442",2017
+102,"Nursery, elementary, and secondary schools",624,Social assistance,"12,780",0,0,0,"12,780",2017
+103,Commercial and vocational schools,61,Educational services,"51,399",0,0,0,"51,399",2017
+104,Professional and other services,327,Nonmetallic mineral products,"4,345",675,611,"1,361","6,992",2017
+104,Professional and other services,332,Fabricated metal products,309,9,64,97,479,2017
+104,Professional and other services,323,Printing and related support activities,7,0,1,0,8,2017
+104,Professional and other services,4A0,Other retail,"5,455",0,0,0,"5,455",2017
+104,Professional and other services,481,Air transportation,11,0,0,0,11,2017
+104,Professional and other services,5411,Legal services,"105,791",0,0,0,"105,791",2017
+104,Professional and other services,5412OP,"Miscellaneous professional, scientific, and technical services","25,711",0,0,0,"25,711",2017
+104,Professional and other services,561,Administrative and support services,"5,527",0,0,0,"5,527",2017
+104,Professional and other services,81,"Other services, except government","43,882",0,0,0,"43,882",2017
+104,Professional and other services,Other,Noncomparable imports and rest-of-the-world adjustment,0,0,0,0,0,2017
+105,Personal care and clothing services,532RL,Rental and leasing services and lessors of intangible assets,796,0,0,0,796,2017
+105,Personal care and clothing services,61,Educational services,162,0,0,0,162,2017
+105,Personal care and clothing services,721,Accommodation,372,0,0,0,372,2017
+105,Personal care and clothing services,81,"Other services, except government","154,347",0,0,0,"154,347",2017
+106,Social services and religious activities,623,Nursing and residential care facilities,"46,533",0,0,0,"46,533",2017
+106,Social services and religious activities,624,Social assistance,"117,210",0,0,0,"117,210",2017
+106,Social services and religious activities,81,"Other services, except government","28,089",0,0,0,"28,089",2017
+107,Household maintenance,481,Air transportation,10,0,0,0,10,2017
+107,Household maintenance,483,Water transportation,4,0,0,0,4,2017
+107,Household maintenance,484,Truck transportation,"12,129",0,0,0,"12,129",2017
+107,Household maintenance,493,Warehousing and storage,86,0,0,0,86,2017
+107,Household maintenance,ORE,Other real estate,"5,575",0,0,0,"5,575",2017
+107,Household maintenance,532RL,Rental and leasing services and lessors of intangible assets,"1,102",0,0,0,"1,102",2017
+107,Household maintenance,561,Administrative and support services,"35,036",0,0,0,"35,036",2017
+107,Household maintenance,81,"Other services, except government","28,220",0,0,0,"28,220",2017
+109,Foreign travel by U.S. residents,481,Air transportation,"33,647",0,0,0,"33,647",2017
+109,Foreign travel by U.S. residents,483,Water transportation,"19,473",0,0,0,"19,473",2017
+109,Foreign travel by U.S. residents,Other,Noncomparable imports and rest-of-the-world adjustment,"101,652",0,0,0,"101,652",2017
+110,Less: Expenditures in the United States by nonresidents,Other,Noncomparable imports and rest-of-the-world adjustment,"-198,935",0,0,0,"-198,935",2017
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),513,Broadcasting and telecommunications,"4,944",0,0,0,"4,944",2017
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),5411,Legal services,-621,0,0,0,-621,2017
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),5412OP,"Miscellaneous professional, scientific, and technical services","6,430",0,0,0,"6,430",2017
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),61,Educational services,"68,797",0,0,0,"68,797",2017
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),621,Ambulatory health care services,"13,266",0,0,0,"13,266",2017
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),622,Hospitals,"41,473",0,0,0,"41,473",2017
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),623,Nursing and residential care facilities,"14,018",0,0,0,"14,018",2017
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),624,Social assistance,"83,206",0,0,0,"83,206",2017
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),711AS,"Performing arts, spectator sports, museums, and related activities","17,327",0,0,0,"17,327",2017
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),713,"Amusements, gambling, and recreation industries","7,125",0,0,0,"7,125",2017
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),81,"Other services, except government","161,981",0,0,0,"161,981",2017
+,,,,0,0,0,0,0,
+,,,,0,0,0,0,0,

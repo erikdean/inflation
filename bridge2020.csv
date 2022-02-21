@@ -1,0 +1,306 @@
+"PCE Bridge Table, 2020",,,,,,,,,
+[Millions of dollars],,,,,,,,,
+Bureau of Economic Analysis,,,,,,,,,
+,,,,Producers' Value,Transportation Costs,            Trade Margins,,Purchasers' Value,
+NIPA Line,PCE Category,Commodity Code,Commodity Description,,,Wholesale,Retail,,Year
+5,New motor vehicles ,3361MV,"Motor vehicles, bodies and trailers, and parts","215,969","3,261","6,158","67,520","292,908",2020
+6,Net purchases of used motor vehicles ,Used,"Scrap, used and secondhand goods","106,168","1,626","3,471","56,643","167,908",2020
+7,Motor vehicles parts and accessories ,327,Nonmetallic mineral products,100,17,15,69,201,2020
+7,Motor vehicles parts and accessories ,331,Primary metals,17,1,2,11,31,2020
+7,Motor vehicles parts and accessories ,332,Fabricated metal products,634,21,311,436,"1,401",2020
+7,Motor vehicles parts and accessories ,333,Machinery,0,0,0,0,1,2020
+7,Motor vehicles parts and accessories ,334,Computer and electronic products,37,0,20,25,83,2020
+7,Motor vehicles parts and accessories ,335,"Electrical equipment, appliances, and components","2,258",26,330,"1,555","4,169",2020
+7,Motor vehicles parts and accessories ,3361MV,"Motor vehicles, bodies and trailers, and parts","20,277",254,"2,951","13,965","37,446",2020
+7,Motor vehicles parts and accessories ,339,Miscellaneous manufacturing,266,37,86,183,572,2020
+7,Motor vehicles parts and accessories ,325,Chemical products,269,5,27,149,450,2020
+7,Motor vehicles parts and accessories ,326,Plastics and rubber products,"17,539",379,"4,327","11,996","34,241",2020
+7,Motor vehicles parts and accessories ,Used,"Scrap, used and secondhand goods",-264,12,"1,280",824,"1,853",2020
+9,Furniture and furnishings ,321,Wood products,"4,138",292,757,"6,481","11,667",2020
+9,Furniture and furnishings ,327,Nonmetallic mineral products,"3,439",534,"1,488","1,795","7,256",2020
+9,Furniture and furnishings ,331,Primary metals,255,8,29,481,774,2020
+9,Furniture and furnishings ,332,Fabricated metal products,804,26,326,"1,513","2,669",2020
+9,Furniture and furnishings ,334,Computer and electronic products,"1,248",35,340,"2,015","3,638",2020
+9,Furniture and furnishings ,335,"Electrical equipment, appliances, and components","2,585",358,782,"4,212","7,936",2020
+9,Furniture and furnishings ,337,Furniture and related products,"59,555","8,295","17,896","52,092","137,837",2020
+9,Furniture and furnishings ,339,Miscellaneous manufacturing,"6,505",565,"2,403","6,473","15,945",2020
+9,Furniture and furnishings ,313TT,Textile mills and textile product mills,"9,618",543,"5,887","19,374","35,422",2020
+9,Furniture and furnishings ,315AL,Apparel and leather and allied products,12,1,5,20,38,2020
+9,Furniture and furnishings ,323,Printing and related support activities,265,13,30,427,735,2020
+9,Furniture and furnishings ,326,Plastics and rubber products,499,10,145,908,"1,562",2020
+9,Furniture and furnishings ,532RL,Rental and leasing services and lessors of intangible assets,"15,818",0,0,0,"15,818",2020
+9,Furniture and furnishings ,Used,"Scrap, used and secondhand goods",595,985,459,"2,048","4,088",2020
+10,Household appliances ,331,Primary metals,4,0,0,3,7,2020
+10,Household appliances ,333,Machinery,"2,659",86,"1,324","2,024","6,093",2020
+10,Household appliances ,335,"Electrical equipment, appliances, and components","27,662","1,137","8,280","20,309","57,389",2020
+10,Household appliances ,326,Plastics and rubber products,5,0,2,11,18,2020
+10,Household appliances ,Used,"Scrap, used and secondhand goods",-132,14,3,6,-110,2020
+11,"Glassware, tableware and household utensils ",321,Wood products,514,36,85,240,875,2020
+11,"Glassware, tableware and household utensils ",327,Nonmetallic mineral products,"3,576",573,"2,085","2,082","8,316",2020
+11,"Glassware, tableware and household utensils ",331,Primary metals,258,8,29,120,416,2020
+11,"Glassware, tableware and household utensils ",332,Fabricated metal products,"4,496",145,"1,783","2,115","8,539",2020
+11,"Glassware, tableware and household utensils ",339,Miscellaneous manufacturing,243,3,168,113,527,2020
+11,"Glassware, tableware and household utensils ",326,Plastics and rubber products,"17,155",345,"2,108","8,007","27,616",2020
+11,"Glassware, tableware and household utensils ",Used,"Scrap, used and secondhand goods","-1,827",120,56,41,"-1,610",2020
+12,Tools and equipment for house and garden ,321,Wood products,5,0,1,9,14,2020
+12,Tools and equipment for house and garden ,327,Nonmetallic mineral products,630,175,80,348,"1,234",2020
+12,Tools and equipment for house and garden ,331,Primary metals,15,0,2,28,45,2020
+12,Tools and equipment for house and garden ,332,Fabricated metal products,"2,716",88,"1,367","5,075","9,246",2020
+12,Tools and equipment for house and garden ,333,Machinery,"4,653",149,"1,050","8,751","14,604",2020
+12,Tools and equipment for house and garden ,334,Computer and electronic products,353,11,58,664,"1,086",2020
+12,Tools and equipment for house and garden ,335,"Electrical equipment, appliances, and components",139,1,42,261,443,2020
+12,Tools and equipment for house and garden ,337,Furniture and related products,202,31,127,529,888,2020
+12,Tools and equipment for house and garden ,339,Miscellaneous manufacturing,387,54,238,741,"1,419",2020
+12,Tools and equipment for house and garden ,313TT,Textile mills and textile product mills,12,1,5,31,49,2020
+12,Tools and equipment for house and garden ,325,Chemical products,"2,492",71,423,"2,177","5,163",2020
+12,Tools and equipment for house and garden ,326,Plastics and rubber products,200,4,44,524,771,2020
+12,Tools and equipment for house and garden ,532RL,Rental and leasing services and lessors of intangible assets,"1,778",0,0,0,"1,778",2020
+12,Tools and equipment for house and garden ,Used,"Scrap, used and secondhand goods",52,70,22,37,180,2020
+14,"Video, audio, photographic, and information processing equipment and media ",333,Machinery,"1,042",34,"2,959","1,351","5,386",2020
+14,"Video, audio, photographic, and information processing equipment and media ",334,Computer and electronic products,"82,835",920,"22,803","37,644","144,202",2020
+14,"Video, audio, photographic, and information processing equipment and media ",335,"Electrical equipment, appliances, and components","1,631",19,493,"1,143","3,286",2020
+14,"Video, audio, photographic, and information processing equipment and media ",339,Miscellaneous manufacturing,10,1,1,52,65,2020
+14,"Video, audio, photographic, and information processing equipment and media ",315AL,Apparel and leather and allied products,3,0,1,3,7,2020
+14,"Video, audio, photographic, and information processing equipment and media ",511,"Publishing industries, except internet (includes software)","70,778",721,"17,005","15,177","103,681",2020
+14,"Video, audio, photographic, and information processing equipment and media ",512,Motion picture and sound recording industries,"7,198",53,"1,660","8,106","17,018",2020
+14,"Video, audio, photographic, and information processing equipment and media ",514,"Data processing, internet publishing, and other information services","10,042",0,0,0,"10,042",2020
+14,"Video, audio, photographic, and information processing equipment and media ",Used,"Scrap, used and secondhand goods",-58,124,42,35,144,2020
+15,"Sporting equipment, supplies, guns, and ammunition ",331,Primary metals,142,5,16,133,296,2020
+15,"Sporting equipment, supplies, guns, and ammunition ",332,Fabricated metal products,"9,202",294,"3,383","8,523","21,402",2020
+15,"Sporting equipment, supplies, guns, and ammunition ",3364OT,Other transportation equipment,"4,432",49,278,"2,493","7,252",2020
+15,"Sporting equipment, supplies, guns, and ammunition ",339,Miscellaneous manufacturing,"20,819","2,673","7,501","21,159","52,153",2020
+15,"Sporting equipment, supplies, guns, and ammunition ",313TT,Textile mills and textile product mills,"2,112",134,866,"1,988","5,100",2020
+15,"Sporting equipment, supplies, guns, and ammunition ",315AL,Apparel and leather and allied products,142,7,61,134,345,2020
+15,"Sporting equipment, supplies, guns, and ammunition ",325,Chemical products,"2,132",64,303,"2,007","4,506",2020
+15,"Sporting equipment, supplies, guns, and ammunition ",Used,"Scrap, used and secondhand goods",-65,0,0,0,-65,2020
+16,Sports and recreational vehicles ,332,Fabricated metal products,10,0,6,7,23,2020
+16,Sports and recreational vehicles ,333,Machinery,44,1,9,29,84,2020
+16,Sports and recreational vehicles ,335,"Electrical equipment, appliances, and components",0,0,0,0,1,2020
+16,Sports and recreational vehicles ,3361MV,"Motor vehicles, bodies and trailers, and parts","19,146",226,658,"7,340","27,370",2020
+16,Sports and recreational vehicles ,3364OT,Other transportation equipment,"20,017",214,"2,784","11,951","34,966",2020
+16,Sports and recreational vehicles ,326,Plastics and rubber products,"1,471",32,365,"1,009","2,878",2020
+16,Sports and recreational vehicles ,Used,"Scrap, used and secondhand goods",763,"6,475",975,"1,545","9,758",2020
+17,Recreational books ,323,Printing and related support activities,25,1,3,17,46,2020
+17,Recreational books ,511,"Publishing industries, except internet (includes software)","8,134",405,"1,563","5,669","15,772",2020
+17,Recreational books ,514,"Data processing, internet publishing, and other information services","4,165",0,0,0,"4,165",2020
+18,Musical instruments,339,Miscellaneous manufacturing,"2,088",290,675,"2,617","5,670",2020
+18,Musical instruments,315AL,Apparel and leather and allied products,171,9,55,214,449,2020
+18,Musical instruments,Used,"Scrap, used and secondhand goods",46,79,18,74,216,2020
+20,Jewelry and watches ,334,Computer and electronic products,"4,560",49,"3,151","6,394","14,154",2020
+20,Jewelry and watches ,339,Miscellaneous manufacturing,"18,667",202,"12,949","26,567","58,385",2020
+20,Jewelry and watches ,Used,"Scrap, used and secondhand goods",539,"1,020",488,"1,853","3,900",2020
+21,Therapeutic appliances and equipment,334,Computer and electronic products,"3,139",33,"1,180","2,434","6,786",2020
+21,Therapeutic appliances and equipment,335,"Electrical equipment, appliances, and components",54,5,16,75,150,2020
+21,Therapeutic appliances and equipment,339,Miscellaneous manufacturing,"22,092",230,"7,284","20,556","50,162",2020
+21,Therapeutic appliances and equipment,621,Ambulatory health care services,"11,883",0,0,0,"11,883",2020
+21,Therapeutic appliances and equipment,Used,"Scrap, used and secondhand goods",1,2,0,2,4,2020
+22,Educational books,511,"Publishing industries, except internet (includes software)","3,993",198,792,"2,778","7,760",2020
+22,Educational books,514,"Data processing, internet publishing, and other information services","2,171",0,0,0,"2,171",2020
+22,Educational books,Used,"Scrap, used and secondhand goods",-1,279,41,145,464,2020
+23,Luggage and similar personal items ,321,Wood products,173,9,74,279,534,2020
+23,Luggage and similar personal items ,339,Miscellaneous manufacturing,"1,928",269,812,"2,825","5,834",2020
+23,Luggage and similar personal items ,315AL,Apparel and leather and allied products,"8,925",446,"2,837","9,799","22,007",2020
+24,Telephone and facsimile equipment ,334,Computer and electronic products,"11,224",115,"6,012","6,999","24,350",2020
+27,Food and nonalcoholic beverages purchased for off-premises consumption ,111CA,Farms,"67,946","9,264","16,171","28,108","121,490",2020
+27,Food and nonalcoholic beverages purchased for off-premises consumption ,113FF,"Forestry, fishing, and related activities","4,496",531,366,"1,694","7,087",2020
+27,Food and nonalcoholic beverages purchased for off-premises consumption ,212,"Mining, except oil and gas",30,11,2,13,56,2020
+27,Food and nonalcoholic beverages purchased for off-premises consumption ,311FT,Food and beverage and tobacco products,"523,214","11,022","83,659","233,079","850,974",2020
+27,Food and nonalcoholic beverages purchased for off-premises consumption ,325,Chemical products,"1,141",43,114,508,"1,807",2020
+27,Food and nonalcoholic beverages purchased for off-premises consumption ,Used,"Scrap, used and secondhand goods","-2,158",0,0,0,"-2,158",2020
+28,Alcoholic beverages purchased for off-premises consumption,311FT,Food and beverage and tobacco products,"80,337","2,137","44,645","39,793","166,912",2020
+29,Food produced and consumed on farms ,111CA,Farms,508,0,0,0,508,2020
+32,Womens and girls clothing ,339,Miscellaneous manufacturing,622,72,224,"1,083","2,001",2020
+32,Womens and girls clothing ,313TT,Textile mills and textile product mills,"2,510",126,962,"4,367","7,966",2020
+32,Womens and girls clothing ,315AL,Apparel and leather and allied products,"49,839","2,537","16,519","86,699","155,594",2020
+32,Womens and girls clothing ,Used,"Scrap, used and secondhand goods",-5,0,0,0,-5,2020
+33,Mens and boys clothing ,339,Miscellaneous manufacturing,617,57,224,653,"1,551",2020
+33,Mens and boys clothing ,313TT,Textile mills and textile product mills,121,6,47,128,302,2020
+33,Mens and boys clothing ,315AL,Apparel and leather and allied products,"37,835","1,930","14,745","40,008","94,518",2020
+33,Mens and boys clothing ,Used,"Scrap, used and secondhand goods",-249,163,49,128,90,2020
+34,Childrens and infants clothing ,313TT,Textile mills and textile product mills,606,30,261,"1,063","1,961",2020
+34,Childrens and infants clothing ,315AL,Apparel and leather and allied products,"2,179",109,720,"3,790","6,797",2020
+34,Childrens and infants clothing ,322,Paper products,"2,971",159,339,"5,205","8,675",2020
+34,Childrens and infants clothing ,Used,"Scrap, used and secondhand goods",-4,73,18,94,181,2020
+35,Other clothing materials and footwear ,339,Miscellaneous manufacturing,170,24,29,297,520,2020
+35,Other clothing materials and footwear ,313TT,Textile mills and textile product mills,"1,693",91,351,"2,566","4,702",2020
+35,Other clothing materials and footwear ,315AL,Apparel and leather and allied products,"31,642","1,586","10,189","34,162","77,580",2020
+35,Other clothing materials and footwear ,Used,"Scrap, used and secondhand goods",0,0,0,0,0,2020
+37,"Motor vehicle fuels, lubricants, and fluids ",324,Petroleum and coal products,"97,255","7,026","53,966","70,469","228,715",2020
+37,"Motor vehicle fuels, lubricants, and fluids ",325,Chemical products,15,0,2,8,25,2020
+38,Fuel oil and other fuels ,212,"Mining, except oil and gas",5,2,0,5,11,2020
+38,Fuel oil and other fuels ,321,Wood products,349,25,113,398,885,2020
+38,Fuel oil and other fuels ,324,Petroleum and coal products,"6,634",493,"4,014","5,532","16,673",2020
+38,Fuel oil and other fuels ,325,Chemical products,196,8,20,223,447,2020
+40,Pharmaceutical and other medical products ,339,Miscellaneous manufacturing,"1,957",21,736,"3,360","6,074",2020
+40,Pharmaceutical and other medical products ,324,Petroleum and coal products,663,47,85,"1,161","1,957",2020
+40,Pharmaceutical and other medical products ,325,Chemical products,"270,149","5,009","102,292","190,918","568,367",2020
+40,Pharmaceutical and other medical products ,326,Plastics and rubber products,86,2,37,226,352,2020
+41,Recreational items ,111CA,Farms,"24,922","3,152","5,083","13,554","46,711",2020
+41,Recreational items ,212,"Mining, except oil and gas",9,3,1,8,22,2020
+41,Recreational items ,335,"Electrical equipment, appliances, and components",8,0,2,6,16,2020
+41,Recreational items ,339,Miscellaneous manufacturing,"24,749","3,447","9,393","30,316","67,905",2020
+41,Recreational items ,311FT,Food and beverage and tobacco products,"23,848",540,"5,984","21,481","51,853",2020
+41,Recreational items ,313TT,Textile mills and textile product mills,32,2,16,29,79,2020
+41,Recreational items ,315AL,Apparel and leather and allied products,407,20,175,366,968,2020
+41,Recreational items ,322,Paper products,687,56,79,499,"1,321",2020
+41,Recreational items ,323,Printing and related support activities,313,16,36,380,744,2020
+41,Recreational items ,325,Chemical products,872,22,"1,286",741,"2,920",2020
+41,Recreational items ,326,Plastics and rubber products,"1,213",24,150,"1,103","2,490",2020
+41,Recreational items ,81,"Other services, except government","3,333",0,0,0,"3,333",2020
+41,Recreational items ,Used,"Scrap, used and secondhand goods","1,780","3,082","1,100","6,326","12,289",2020
+42,Household supplies ,212,"Mining, except oil and gas",0,0,0,0,0,2020
+42,Household supplies ,321,Wood products,663,47,108,482,"1,300",2020
+42,Household supplies ,332,Fabricated metal products,565,18,124,378,"1,085",2020
+42,Household supplies ,335,"Electrical equipment, appliances, and components","4,971",56,"1,502","9,212","15,741",2020
+42,Household supplies ,339,Miscellaneous manufacturing,"3,868",539,"1,675","8,939","15,021",2020
+42,Household supplies ,313TT,Textile mills and textile product mills,"8,754",584,"4,016","22,321","35,675",2020
+42,Household supplies ,315AL,Apparel and leather and allied products,"1,247",63,412,"3,262","4,983",2020
+42,Household supplies ,322,Paper products,"17,195",965,"1,965","12,488","32,612",2020
+42,Household supplies ,323,Printing and related support activities,819,41,94,"2,008","2,962",2020
+42,Household supplies ,325,Chemical products,"25,879",510,"2,609","14,431","43,428",2020
+42,Household supplies ,326,Plastics and rubber products,"4,230",80,702,"4,239","9,252",2020
+42,Household supplies ,Used,"Scrap, used and secondhand goods",0,5,0,6,11,2020
+43,Personal care products ,332,Fabricated metal products,971,31,525,945,"2,472",2020
+43,Personal care products ,333,Machinery,249,8,57,393,707,2020
+43,Personal care products ,335,"Electrical equipment, appliances, and components","8,773",771,"2,638","5,365","17,547",2020
+43,Personal care products ,339,Miscellaneous manufacturing,"4,029",561,"1,991","3,921","10,502",2020
+43,Personal care products ,313TT,Textile mills and textile product mills,394,20,170,384,967,2020
+43,Personal care products ,315AL,Apparel and leather and allied products,841,42,278,819,"1,981",2020
+43,Personal care products ,322,Paper products,"1,583",86,181,"2,419","4,269",2020
+43,Personal care products ,325,Chemical products,"44,443",874,"15,198","43,260","103,775",2020
+43,Personal care products ,326,Plastics and rubber products,633,12,199,914,"1,758",2020
+44,Tobacco ,311FT,Food and beverage and tobacco products,"52,277",704,"29,909","20,616","103,506",2020
+45,"Magazines, newspapers, and stationery ",339,Miscellaneous manufacturing,"2,557",361,391,"1,343","4,652",2020
+45,"Magazines, newspapers, and stationery ",322,Paper products,949,47,108,497,"1,601",2020
+45,"Magazines, newspapers, and stationery ",323,Printing and related support activities,"4,181",210,477,"2,188","7,055",2020
+45,"Magazines, newspapers, and stationery ",325,Chemical products,"2,739",82,275,"1,433","4,529",2020
+45,"Magazines, newspapers, and stationery ",326,Plastics and rubber products,394,7,86,206,694,2020
+45,"Magazines, newspapers, and stationery ",511,"Publishing industries, except internet (includes software)","21,286","1,050","3,477","5,490","31,302",2020
+45,"Magazines, newspapers, and stationery ",512,Motion picture and sound recording industries,118,1,23,20,163,2020
+45,"Magazines, newspapers, and stationery ",514,"Data processing, internet publishing, and other information services","43,446",0,0,0,"43,446",2020
+45,"Magazines, newspapers, and stationery ",Used,"Scrap, used and secondhand goods",0,26,3,6,35,2020
+46,Net expenditures abroad by U.S. residents ,Other,Noncomparable imports and rest-of-the-world adjustment,"11,110",0,0,0,"11,110",2020
+51,Rental of tenant-occupied nonfarm housing ,HS,Housing,"559,008",0,0,0,"559,008",2020
+52,Imputed rental of owner-occupied nonfarm housing ,HS,Housing,"1,731,748",0,0,0,"1,731,748",2020
+53,Rental value of farm dwellings  ,HS,Housing,"23,005",0,0,0,"23,005",2020
+54,Group housing ,721,Accommodation,"1,894",0,0,0,"1,894",2020
+56,Water supply and sanitation ,22,Utilities,"47,877",0,0,0,"47,877",2020
+56,Water supply and sanitation ,562,Waste management and remediation services,"29,973",0,0,0,"29,973",2020
+56,Water supply and sanitation ,GSLE,State and local government enterprises,"34,519",0,0,0,"34,519",2020
+58,Electricity,22,Utilities,"189,686",0,0,0,"189,686",2020
+59,Natural Gas ,22,Utilities,"50,439",0,0,0,"50,439",2020
+62,Physician services ,621,Ambulatory health care services,"552,022",0,0,0,"552,022",2020
+63,Dental services ,621,Ambulatory health care services,"110,493",0,0,0,"110,493",2020
+64,Paramedical services ,532RL,Rental and leasing services and lessors of intangible assets,"2,585",0,0,0,"2,585",2020
+64,Paramedical services ,621,Ambulatory health care services,"399,321",0,0,0,"399,321",2020
+66,Hospitals ,622,Hospitals,"1,061,380",0,0,0,"1,061,380",2020
+67,Nursing homes,623,Nursing and residential care facilities,"182,600",0,0,0,"182,600",2020
+70,Motor vehicle maintenance and repair,487OS,Other transportation and support activities,"15,192",0,0,0,"15,192",2020
+70,Motor vehicle maintenance and repair,61,Educational services,29,0,0,0,29,2020
+70,Motor vehicle maintenance and repair,81,"Other services, except government","168,030",0,0,0,"168,030",2020
+71,Other motor vehicle services,532RL,Rental and leasing services and lessors of intangible assets,"81,875",0,0,0,"81,875",2020
+71,Other motor vehicle services,81,"Other services, except government","6,518",0,0,0,"6,518",2020
+71,Other motor vehicle services,GSLE,State and local government enterprises,"10,627",0,0,0,"10,627",2020
+73,Ground transportation,482,Rail transportation,407,0,0,0,407,2020
+73,Ground transportation,485,Transit and ground passenger transportation,"27,388",0,0,0,"27,388",2020
+73,Ground transportation,487OS,Other transportation and support activities,693,0,0,0,693,2020
+73,Ground transportation,561,Administrative and support services,"1,418",0,0,0,"1,418",2020
+74,Air transportation,481,Air transportation,"49,649",0,0,0,"49,649",2020
+75,Water transportation,483,Water transportation,"1,044",0,0,0,"1,044",2020
+75,Water transportation,487OS,Other transportation and support activities,570,0,0,0,570,2020
+77,"Membership clubs, sports centers, parks, theaters, and museums",113FF,"Forestry, fishing, and related activities","4,035",0,0,0,"4,035",2020
+77,"Membership clubs, sports centers, parks, theaters, and museums",481,Air transportation,0,0,0,0,0,2020
+77,"Membership clubs, sports centers, parks, theaters, and museums",512,Motion picture and sound recording industries,"2,890",0,0,0,"2,890",2020
+77,"Membership clubs, sports centers, parks, theaters, and museums",514,"Data processing, internet publishing, and other information services","4,586",0,0,0,"4,586",2020
+77,"Membership clubs, sports centers, parks, theaters, and museums",532RL,Rental and leasing services and lessors of intangible assets,"2,398",0,0,0,"2,398",2020
+77,"Membership clubs, sports centers, parks, theaters, and museums",561,Administrative and support services,55,0,0,0,55,2020
+77,"Membership clubs, sports centers, parks, theaters, and museums",61,Educational services,"12,860",0,0,0,"12,860",2020
+77,"Membership clubs, sports centers, parks, theaters, and museums",711AS,"Performing arts, spectator sports, museums, and related activities","19,977",0,0,0,"19,977",2020
+77,"Membership clubs, sports centers, parks, theaters, and museums",713,"Amusements, gambling, and recreation industries","51,132",0,0,0,"51,132",2020
+77,"Membership clubs, sports centers, parks, theaters, and museums",721,Accommodation,"6,066",0,0,0,"6,066",2020
+78,"Audio-video, photographic, and information processing equipment services",513,Broadcasting and telecommunications,"99,566",0,0,0,"99,566",2020
+78,"Audio-video, photographic, and information processing equipment services",514,"Data processing, internet publishing, and other information services","35,115",0,0,0,"35,115",2020
+78,"Audio-video, photographic, and information processing equipment services",532RL,Rental and leasing services and lessors of intangible assets,"5,291",0,0,0,"5,291",2020
+78,"Audio-video, photographic, and information processing equipment services",5412OP,"Miscellaneous professional, scientific, and technical services","3,203",0,0,0,"3,203",2020
+78,"Audio-video, photographic, and information processing equipment services",81,"Other services, except government","4,964",0,0,0,"4,964",2020
+79,Gambling,711AS,"Performing arts, spectator sports, museums, and related activities","3,302",0,0,0,"3,302",2020
+79,Gambling,713,"Amusements, gambling, and recreation industries","79,366",0,0,0,"79,366",2020
+79,Gambling,GSLE,State and local government enterprises,"27,437",0,0,0,"27,437",2020
+80,Other recreational services,113FF,"Forestry, fishing, and related activities",402,0,0,0,402,2020
+80,Other recreational services,334,Computer and electronic products,0,0,0,0,0,2020
+80,Other recreational services,5412OP,"Miscellaneous professional, scientific, and technical services","31,770",0,0,0,"31,770",2020
+80,Other recreational services,561,Administrative and support services,"6,690",0,0,0,"6,690",2020
+80,Other recreational services,81,"Other services, except government","15,404",0,0,0,"15,404",2020
+83,Purchased meals and beverages,481,Air transportation,"1,462",0,0,0,"1,462",2020
+83,Purchased meals and beverages,482,Rail transportation,164,0,0,0,164,2020
+83,Purchased meals and beverages,512,Motion picture and sound recording industries,"3,428",0,0,0,"3,428",2020
+83,Purchased meals and beverages,711AS,"Performing arts, spectator sports, museums, and related activities",271,0,0,0,271,2020
+83,Purchased meals and beverages,722,Food services and drinking places,"698,277",0,0,0,"698,277",2020
+84,Food furnished to employees (including military),111CA,Farms,578,77,138,0,793,2020
+84,Food furnished to employees (including military),113FF,"Forestry, fishing, and related activities",314,37,27,0,378,2020
+84,Food furnished to employees (including military),311FT,Food and beverage and tobacco products,"15,759",343,"2,374",0,"18,476",2020
+85,Accommodations ,721,Accommodation,"78,298",0,0,0,"78,298",2020
+88,Financial services furnished without payment,521CI,"Federal Reserve banks, credit intermediation, and related activities","207,187",0,0,0,"207,187",2020
+88,Financial services furnished without payment,525,"Funds, trusts, and other financial vehicles","169,219",0,0,0,"169,219",2020
+89,"Financial service charges, fees, and commissions",521CI,"Federal Reserve banks, credit intermediation, and related activities","96,449",0,0,0,"96,449",2020
+89,"Financial service charges, fees, and commissions",523,"Securities, commodity contracts, and investments","270,627",0,0,0,"270,627",2020
+89,"Financial service charges, fees, and commissions",GFE,Federal government enterprises,"12,904",0,0,0,"12,904",2020
+91,Life insurance,524,Insurance carriers and related activities,"93,541",0,0,0,"93,541",2020
+92,Net household insurance,524,Insurance carriers and related activities,"11,472",0,0,0,"11,472",2020
+93,Net health insurance,524,Insurance carriers and related activities,"252,518",0,0,0,"252,518",2020
+94,Net motor vehicle and other transportation insurance,524,Insurance carriers and related activities,"82,367",0,0,0,"82,367",2020
+97,Telecommunication services,513,Broadcasting and telecommunications,"159,446",0,0,0,"159,446",2020
+97,Telecommunication services,532RL,Rental and leasing services and lessors of intangible assets,24,0,0,0,24,2020
+97,Telecommunication services,561,Administrative and support services,173,0,0,0,173,2020
+97,Telecommunication services,721,Accommodation,100,0,0,0,100,2020
+98,Postal and delivery services,487OS,Other transportation and support activities,"8,699",0,0,0,"8,699",2020
+98,Postal and delivery services,561,Administrative and support services,715,0,0,0,715,2020
+98,Postal and delivery services,GFE,Federal government enterprises,"5,613",0,0,0,"5,613",2020
+98,Postal and delivery services,Used,"Scrap, used and secondhand goods",-15,0,0,0,-15,2020
+99,Internet access,513,Broadcasting and telecommunications,"75,374",0,0,0,"75,374",2020
+101,Higher education,61,Educational services,"186,479",0,0,0,"186,479",2020
+102,"Nursery, elementary, and secondary schools",61,Educational services,"35,390",0,0,0,"35,390",2020
+102,"Nursery, elementary, and secondary schools",624,Social assistance,"12,313",0,0,0,"12,313",2020
+103,Commercial and vocational schools,61,Educational services,"48,572",0,0,0,"48,572",2020
+104,Professional and other services,327,Nonmetallic mineral products,"3,871",653,630,"2,200","7,355",2020
+104,Professional and other services,332,Fabricated metal products,94,3,20,53,170,2020
+104,Professional and other services,323,Printing and related support activities,2,0,0,0,3,2020
+104,Professional and other services,4A0,Other retail,"7,942",0,0,0,"7,942",2020
+104,Professional and other services,481,Air transportation,1,0,0,0,1,2020
+104,Professional and other services,5411,Legal services,"110,437",0,0,0,"110,437",2020
+104,Professional and other services,5412OP,"Miscellaneous professional, scientific, and technical services","26,780",0,0,0,"26,780",2020
+104,Professional and other services,561,Administrative and support services,"3,893",0,0,0,"3,893",2020
+104,Professional and other services,81,"Other services, except government","41,904",0,0,0,"41,904",2020
+104,Professional and other services,Other,Noncomparable imports and rest-of-the-world adjustment,0,0,0,0,0,2020
+105,Personal care and clothing services,532RL,Rental and leasing services and lessors of intangible assets,613,0,0,0,613,2020
+105,Personal care and clothing services,61,Educational services,200,0,0,0,200,2020
+105,Personal care and clothing services,721,Accommodation,9,0,0,0,9,2020
+105,Personal care and clothing services,81,"Other services, except government","109,585",0,0,0,"109,585",2020
+106,Social services and religious activities,623,Nursing and residential care facilities,"52,239",0,0,0,"52,239",2020
+106,Social services and religious activities,624,Social assistance,"130,140",0,0,0,"130,140",2020
+106,Social services and religious activities,81,"Other services, except government","22,239",0,0,0,"22,239",2020
+107,Household maintenance,481,Air transportation,2,0,0,0,2,2020
+107,Household maintenance,483,Water transportation,1,0,0,0,1,2020
+107,Household maintenance,484,Truck transportation,"12,216",0,0,0,"12,216",2020
+107,Household maintenance,493,Warehousing and storage,92,0,0,0,92,2020
+107,Household maintenance,ORE,Other real estate,"6,537",0,0,0,"6,537",2020
+107,Household maintenance,532RL,Rental and leasing services and lessors of intangible assets,"1,084",0,0,0,"1,084",2020
+107,Household maintenance,561,Administrative and support services,"40,423",0,0,0,"40,423",2020
+107,Household maintenance,81,"Other services, except government","32,409",0,0,0,"32,409",2020
+109,Foreign travel by U.S. residents,481,Air transportation,"8,570",0,0,0,"8,570",2020
+109,Foreign travel by U.S. residents,483,Water transportation,"12,056",0,0,0,"12,056",2020
+109,Foreign travel by U.S. residents,Other,Noncomparable imports and rest-of-the-world adjustment,"33,365",0,0,0,"33,365",2020
+110,Less: Expenditures in the United States by nonresidents,Other,Noncomparable imports and rest-of-the-world adjustment,"-74,608",0,0,0,"-74,608",2020
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),513,Broadcasting and telecommunications,"5,496",0,0,0,"5,496",2020
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),5411,Legal services,-440,0,0,0,-440,2020
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),5412OP,"Miscellaneous professional, scientific, and technical services","7,776",0,0,0,"7,776",2020
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),61,Educational services,"73,769",0,0,0,"73,769",2020
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),621,Ambulatory health care services,"14,683",0,0,0,"14,683",2020
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),622,Hospitals,"86,503",0,0,0,"86,503",2020
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),623,Nursing and residential care facilities,"21,675",0,0,0,"21,675",2020
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),624,Social assistance,"92,308",0,0,0,"92,308",2020
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),711AS,"Performing arts, spectator sports, museums, and related activities","15,669",0,0,0,"15,669",2020
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),713,"Amusements, gambling, and recreation industries","7,726",0,0,0,"7,726",2020
+111,Final consumption expenditures of nonprofit institutions serving households (NPISHs),81,"Other services, except government","195,711",0,0,0,"195,711",2020
+,,,,0,0,0,0,0,
+,,,,0,0,0,0,0,

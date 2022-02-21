@@ -1,0 +1,355 @@
+---
+title: "PCE-NAICS Bridge Work"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+  word_document: default
+  font-family: Arial
+  always_allow_html: true
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = FALSE)
+
+# import packages we need (and maybe some we don't). run install.packages("") on each of these if you haven't before
+
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(broom)
+library(lubridate)
+library(gtsummary)
+library(tidyverse)
+library(plotly)
+library(reshape)
+library(viridis)
+library(tibble)
+library(forecast)
+library(quantmod)
+library(fpp3)
+library(zoo)
+library(vars)
+library(WaveletComp)
+library(wavethresh)
+library(waveslim)
+
+
+# set color theme for plots
+
+scale_colour_brewer_d <- function(...) {
+  scale_colour_brewer(palette = "Dark2", ...)
+}
+
+scale_fill_brewer_d <- function(...) {
+  scale_fill_brewer(palette = "Dark2", ...)
+}
+
+options(
+  ggplot2.discrete.colour = scale_colour_brewer_d,
+  ggplot2.discrete.fill = scale_fill_brewer_d
+)
+
+# don't output warnings in markdown
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+
+```
+
+
+
+```{r import tables and format, include=FALSE}
+
+#clear the stuff
+
+rm(list = ls())
+
+# import the tables
+
+startYear <- 1997
+endYear <- 2020
+
+tables <- vector("list", endYear - startYear)
+tab <- data.frame()
+
+
+for (i in 1:(endYear - startYear + 1)){
+
+  year <- i + startYear - 1
+
+  tab <- read.csv(paste0("bridge", year, ".csv"), 
+     header = F, na.strings = "---")
+
+  # remove the non-data rows
+  tab <- tab[6:306, 1:9]
+  
+  # years prior to 2015 included two items that don't show up starting with 2015.  These were:
+  # Publishing industries, except internet (includes software) (dropped starting with 2015)
+  # and
+  # Primary metals
+  # we'll remove those from the earlier years
+  if(year < 2015){
+    tab <- tab[-(122), ]
+    tab <- tab[-(148), ]
+  } else {
+    tab <- tab[1:299, ] #remove the last two (blank) rows for 2015 and after
+  }
+  
+  # column names
+  colnames(tab) <- c("NIPA.Line", "PCE.Cat", "Com.Code", "Com.Desc", "Prod.Val", "Trans.Costs", "Wholesale", "Retail", "Purch.Val")
+  
+  #tab[, 5:9] <- as.numeric(tab[, 5:9])
+  #as.numeric(tab[,5]) 
+  for (x in 5:9){ tab[,x] <- as.numeric(gsub(",", "", tab[,x])) }
+  
+  tables[[i]] <- tab
+  names(tables)[i] <- year
+  
+}
+
+# ways to access data  
+#tables[["2016"]][["Com.Desc"]]
+#tables[[1]][3,6]
+
+
+
+```
+
+```{r import and format PCE Price Data, echo = F}
+
+# see High Inflation Item Analysis v1.Rmd
+
+# import the tables
+
+prices <- read.csv("244U.csv", header = F, na.strings = "---")
+
+# format prices tables (same as above)
+
+  pri <- prices[5:413, ]
+  pri <- pri[-c(3, 369:409), ]
+  #pri <- pri[-(341:367), ]
+  pri[2,3:ncol(pri)] <- as.character(my(paste0(pri[2,3:ncol(pri)], " ", pri[1,3:ncol(pri)])))
+  pri <- pri[-1,]
+  pri[1, 2] <- "Date"
+
+# the item names in the PCE price that are also in the PCE-NAICS bridge will all end in a number then ")"
+
+  
+pcePrice <- pri[1, ]  
+pcePrice <- rbind(pcePrice, pri[ grepl("[0-9]", pri$V2), ])
+pcePrice[, 2] <- trimws(pcePrice[, 2])
+```
+
+```{r make master table }
+
+# sum purchaser's value for each item
+df <- data.frame()
+for (i in 1:(endYear - startYear + 1)){
+  df <- rbind(df, c((startYear + i - 1), tables[[i]][["Purch.Val"]]))
+}
+colnames(df) <- c("Date", tables[[1]][["PCE.Cat"]])
+df <- melt(df, id = "Date")
+df <- aggregate(df$value, by=list(Category=df$variable), FUN=sum)
+colnames(df) <- c("Item", "Purch.Val")
+purchVal <- df
+
+# sum producer's value for each item
+df <- data.frame()
+for (i in 1:(endYear - startYear + 1)){
+  df <- rbind(df, c((startYear + i - 1), tables[[i]][["Prod.Val"]]))
+}
+colnames(df) <- c("Date", tables[[1]][["PCE.Cat"]])
+df <- melt(df, id = "Date")
+df <- aggregate(df$value, by=list(Category=df$variable), FUN=sum)
+colnames(df) <- c("Item", "Prod.Val")
+prodVal <- df
+
+# sum transportation costs for each item
+df <- data.frame()
+for (i in 1:(endYear - startYear + 1)){
+  df <- rbind(df, c((startYear + i - 1), tables[[i]][["Trans.Costs"]]))
+}
+colnames(df) <- c("Date", tables[[1]][["PCE.Cat"]])
+df <- melt(df, id = "Date")
+df <- aggregate(df$value, by=list(Category=df$variable), FUN=sum)
+colnames(df) <- c("Item", "Trans.Costs")
+transCosts <- df
+
+# sum wholesale value for each item
+df <- data.frame()
+for (i in 1:(endYear - startYear + 1)){
+  df <- rbind(df, c((startYear + i - 1), tables[[i]][["Wholesale"]]))
+}
+colnames(df) <- c("Date", tables[[1]][["PCE.Cat"]])
+df <- melt(df, id = "Date")
+df <- aggregate(df$value, by=list(Category=df$variable), FUN=sum)
+colnames(df) <- c("Item", "Wholesale")
+wholesale <- df
+
+# sum retail for each item
+df <- data.frame()
+for (i in 1:(endYear - startYear + 1)){
+  df <- rbind(df, c((startYear + i - 1), tables[[i]][["Retail"]]))
+}
+colnames(df) <- c("Date", tables[[1]][["PCE.Cat"]])
+df <- melt(df, id = "Date")
+df <- aggregate(df$value, by=list(Category=df$variable), FUN=sum)
+colnames(df) <- c("Item", "Retail")
+retail <- df
+
+shares <- data.frame("Item" = purchVal$Item, "Prod.Share" = (prodVal$Prod.Val / purchVal$Purch.Val),
+                     "Transport.Share" = (transCosts$Trans.Costs / purchVal$Purch.Val), 
+                     "Wholesale.Share" = (wholesale$Wholesale / purchVal$Purch.Val),
+                     "Retail.Share" = (retail$Retail / purchVal$Purch.Val))
+
+shares[61:75, 1]
+pcePrice[62:78, 2]
+
+# delete items that don't show up in both
+
+# 17 in the bridge, Telephone and facsimie equipment not in PCE
+shares <- shares[-(17),]
+# the last two lines of PCE data (Gross output of nonprofit institutions (133) and 
+# Less: Receipts from sales of goods and services by nonprofit institutions (134))
+# don't show up in the bridge data
+pcePrice <- pcePrice[-(77:78),]
+
+
+# calculate pre-pandemic and pandemic inflation (average percentage monthly price change)
+# Note: this is hard coded for a last month of Nov. 2021 (first month of pandemic is Feb 2020)
+
+inf <- data.frame("Item" = shares$Item, "Pan.Avg.Chg" = 0, "Pre.Pan.Avg.Chg" = 0)
+
+for (i in 1:nrow(shares)){
+  
+    df <- 100 * (as.numeric(pcePrice[(i+1), (3:ncol(pcePrice))]) - lag(as.numeric(pcePrice[(i+1), (3:ncol(pcePrice))]))) /
+          lag(as.numeric(pcePrice[(i+1), (3:ncol(pcePrice))]))
+
+    # note 21 and 22 and 141 will have to be increased for every additional month of data after Nov 2021
+    avgPan <- mean(df[(length(df) - 21):length(df)]) 
+    avgPre <- mean(df[(length(df) - 141):(length(df) - 22)]) 
+    
+    inf[i, 2] <- avgPan
+    inf[i, 3] <- avgPre
+}
+
+masterTable <- cbind(shares, inf[, 2:3])
+
+```
+
+```{r plots}
+
+# create a reduced table excluding items without retail &c. data (almost all services)
+
+rt <- masterTable[ masterTable$Retail.Share > 0, ]
+
+ggplot(rt, aes(x = Pre.Pan.Avg.Chg, y = Pan.Avg.Chg, color = Prod.Share)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(rt$Item, 1, 25), 
+      nudge_x = 0.005, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+#    ylim(0, 1000) +
+#    xlim(-1, -0.5) +
+    ggtitle("1. Full") +
+    geom_abline(intercept = 0, slope = 1)
+
+ggplot(rt, aes(x = Pre.Pan.Avg.Chg, y = Pan.Avg.Chg, color = Transport.Share)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(rt$Item, 1, 25), 
+      nudge_x = 0.005, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+#    ylim(0, 1000) +
+#    xlim(-1, -0.5) +
+    ggtitle("1. Full") +
+    geom_abline(intercept = 0, slope = 1)
+
+ggplot(rt, aes(x = Pre.Pan.Avg.Chg, y = Pan.Avg.Chg, color = Wholesale.Share)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(rt$Item, 1, 25), 
+      nudge_x = 0.005, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+#    ylim(0, 1000) +
+#    xlim(-1, -0.5) +
+    ggtitle("1. Full") +
+    geom_abline(intercept = 0, slope = 1)
+
+ggplot(rt, aes(x = Pre.Pan.Avg.Chg, y = Pan.Avg.Chg, color = Retail.Share)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(rt$Item, 1, 25), 
+      nudge_x = 0.005, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+#    ylim(0, 1000) +
+#    xlim(-1, -0.5) +
+    ggtitle("1. Full") +
+    geom_abline(intercept = 0, slope = 1)
+
+ggplot(rt, aes(x = (Pan.Avg.Chg - Pre.Pan.Avg.Chg), y = Prod.Share)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(rt$Item, 1, 25), 
+      #nudge_x = 0.005, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+#    ylim(0, 1000) +
+#    xlim(-1, -0.5) +
+    ggtitle("1. Full")
+
+ggplot(rt, aes(x = (Pan.Avg.Chg - Pre.Pan.Avg.Chg), y = Transport.Share)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(rt$Item, 1, 25), 
+      #nudge_x = 0.005, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+#    ylim(0, 1000) +
+#    xlim(-1, -0.5) +
+    ggtitle("1. Full")
+
+ggplot(rt, aes(x = (Pan.Avg.Chg - Pre.Pan.Avg.Chg), y = Wholesale.Share)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(rt$Item, 1, 25), 
+      #nudge_x = 0.005, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+#    ylim(0, 1000) +
+#    xlim(-1, -0.5) +
+    ggtitle("1. Full")
+
+ggplot(rt, aes(x = (Pan.Avg.Chg - Pre.Pan.Avg.Chg), y = Retail.Share)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(rt$Item, 1, 25), 
+      #nudge_x = 0.005, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+#    ylim(0, 1000) +
+#    xlim(-1, -0.5) +
+    ggtitle("1. Full")
+
+```
+
