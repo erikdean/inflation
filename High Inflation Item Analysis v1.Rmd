@@ -267,8 +267,8 @@ This will build the itemClass table that's the same in Wavelet Analysis of Varia
 
 # From here on out we'll use MODWTs so we can take the full data going back to 1983
 
-# get start and end dates to make a series length of 640
-endDate <- as.Date("2021-11-01")
+# set start and end dates
+endDate <- as.Date("2022-01-01")
 startDate <- as.Date("1983-01-01")
 
 # get the table from the function
@@ -467,7 +467,7 @@ for (i in 1:length(priSeries$name)){
     pad[i, 3] <- avgPre
 }
 
-hist(ppc[,2], breaks = 25, main = "Percent Price Change from Jan 2020 to Most Recent Month (Nov 2021)")
+hist(ppc[,2], breaks = 25, main = "Percent Price Change from Jan 2020 to Most Recent Month (Jan 2022)")
 ppc <- ppc[order(ppc$Pan.Price.Pct.Chg),]
 ppc[180:217,]
 
@@ -614,6 +614,30 @@ pander(hiInfItems[, c(1, 10, 11, 12)], style = 'rmarkdown')
 
 ```
 
+```{r write csv for high inflation items, eval = F}
+
+exportP <- data.frame("Date" = rownames(priSeries$item[i]))
+exportQ <- data.frame("Date" = rownames(priSeries$item[i]))
+
+for(i in 1:nrow(hiInfItems)){
+  # find index of item
+  loc <- which(priSeries$name == hiInfItems$Item[i])
+  exportP <- cbind(exportP, priSeries$item[loc])
+  colnames(exportP)[i+1] <- hiInfItems$Item[i]
+  exportQ <- cbind(exportQ, quaSeries$item[loc])
+  colnames(exportQ)[i+1] <- hiInfItems$Item[i]
+
+}
+
+exportP <- exportP[, -(1)]
+exportQ <- exportQ[, -(1)]
+
+write.csv(exportP, "hiInfPrices.csv")
+write.csv(exportQ, "hiInfquantities.csv")
+
+
+```
+
 ## Analysis Using Continuous Wavelet Transforms
 
 Whether using discrete or continuous wavelet transforms, wavelet analysis is, in essence, a way to characterize the "spectral characteristics of a time-series as a function of time, revealing how the different periodic components of a particular time-series evolve over time," (Aguiar-Conraria and Soares 2011, 478). Whereas Fourier transforms show the frequency distribution of a whole series, wavelets can locate power at various frequencies for particular times in the series.  This is done by projecting a wavelet at different scales, s, (widths) and translations, $\tau$ (time locations) onto the series, $x_t$.  Hence, the continuous wavelet transform with respect to a chosen wavelet function $\psi$ can be expressed as:
@@ -634,25 +658,7 @@ Once the wavelet is chosen, it is possible to calculate wavelet power spectra sh
 
 [Wavecomp looks like a significant extension of the Aguiar... stuff.  Lots of good examples in its documentation]
 
-
-
-
-
-
-
-
 Here are the Continuous Wavelet Transform plots for those items.
-
-
-
-
-
-
-
-
-
-
-
 
 ```{r CWT plots, results = "hide"}
 
@@ -692,7 +698,7 @@ for (selection in 1:ncol(hiP)){
                           upperPeriod = 128,
                           make.pval = TRUE, 
                           verbose = F,
-                          n.sim = 3) # number of simulations
+                          n.sim = 5) # number of simulations
 
   # plot the original series
   par(mar = c(5, 4, 4, 4) + 0.3)                                  # Additional space for second y-axis
@@ -721,4 +727,3 @@ for (selection in 1:ncol(hiP)){
 }
 
 ```
-
