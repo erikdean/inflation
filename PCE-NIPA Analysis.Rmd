@@ -213,7 +213,7 @@ pcePrice <- pcePrice[-(77:78),]
 
 
 # calculate pre-pandemic and pandemic inflation (average percentage monthly price change)
-# Note: this is hard coded for a last month of Feb 2022 (first month of pandemic is Feb 2020)
+# Note: this is hard coded for a last month of Jan 2022 (first month of pandemic is Feb 2020)
 
 inf <- data.frame("Item" = shares$Item, "Pan.Avg.Chg" = 0, "Pre.Pan.Avg.Chg" = 0)
 
@@ -222,7 +222,7 @@ for (i in 1:nrow(shares)){
     df <- 100 * (as.numeric(pcePrice[(i+1), (3:ncol(pcePrice))]) - lag(as.numeric(pcePrice[(i+1), (3:ncol(pcePrice))]))) /
           lag(as.numeric(pcePrice[(i+1), (3:ncol(pcePrice))]))
 
-    # note 23 and 24 and 143 will have to be increased for every additional month of data after Feb 2021
+    # note 23 and 24 and 143 will have to be increased for every additional month of data after Jan 2022
     avgPan <- mean(df[(length(df) - 23):length(df)]) 
     avgPre <- mean(df[(length(df) - 143):(length(df) - 24)]) 
     
