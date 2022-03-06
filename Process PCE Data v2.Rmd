@@ -1,0 +1,344 @@
+---
+title: "Process PCE Data"
+author: "Erik Dean"
+date: "1/17/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+# don't output warnings, code, messages in markdown
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, echo = F) 
+
+# import packages we need (and maybe some we don't). 
+# run install.packages("") on each of these if you haven't before
+
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(broom)
+library(lubridate)
+library(gtsummary)
+library(tidyverse)
+library(plotly)
+library(reshape)
+library(viridis)
+library(tibble)
+library(forecast)
+library(quantmod)
+library(fpp3)
+library(zoo)
+library(vars)
+library(WaveletComp)
+library(wavethresh)
+library(waveslim)
+
+# set color theme for plots
+
+scale_colour_brewer_d <- function(...) {
+  scale_colour_brewer(palette = "Dark2", ...)
+}
+
+scale_fill_brewer_d <- function(...) {
+  scale_fill_brewer(palette = "Dark2", ...)
+}
+
+options(
+  ggplot2.discrete.colour = scale_colour_brewer_d,
+  ggplot2.discrete.fill = scale_fill_brewer_d
+)
+
+```
+
+## Description
+
+This RMD processes Personal Consumption Expenditure tables from the BEAs website.  It includes a function to pull from the data with various parameters (e.g. start and end dates, level of items to retrieve, &c.)
+
+It also has chunks for selecting certain items that we're looking at in our research.
+
+## Data Source
+
+Here, we're going to be working with the underlying (the detailed) monthly price and quantity data.  These are tables...
+* 2.4.3U. Real Personal Consumption Expenditures by Type of Product, Quantity Indexes
+* 2.4.4U. Price Indexes for Personal Consumption Expenditures by Type of Product
+* 2.4.5U. Personal Consumption Expenditures by Type of Product
+
+There's an R API to grab these data but the data comes back without indication of the levels of the items, so I've been running this from CSVs from the website.  To do this, go to:
+
+https://apps.bea.gov/iTable/iTable.cfm?1921=underlying&isuri=1&reqid=19&step=2#1921=underlying&isuri=1&reqid=19&step=2
+
+Then to Section 2, then for each table: click Modify on the right and Monthly and Select All Years.  Then click Download on the right and download as CSV.  Save these in your working directory (use getwd() to check what that is) as 243U.csv, 244U.csv, and 245U.csv.
+
+Note: Table 2.4.5U can be used to calculate weights of the items, though I haven't worked on this yet. For more information, see https://www.bea.gov/help/faq/1006 
+
+Import the tables from CSV and format.  This will produce 3 sets of tables for expenditures, prices, and quantities: the normal table of items (exp, pri, qua), a separate table of aggregates, and a separate table for non-profit institutions serving households (NPISH).
+
+```{r import and format tables, echo = T}
+
+#clear the stuff
+
+rm(list = ls())
+
+# import the tables
+
+expenditures <- read.csv("243U.csv", header = F, na.strings = "---")
+prices <- read.csv("244U.csv", header = F, na.strings = "---")
+quantities <- read.csv("245U.csv", header = F, na.strings = "---")
+
+# format expenditures tables
+
+  # remove title rows (1:4) and footnotes (410:414)
+  exp <- expenditures[5:413, ]
+  
+  # move aggregates to separate table
+  aggExp <- exp[c(3, 369:409), ]
+  exp <- exp[-c(3, 369:409), ]
+  
+  # move non-profit institutions serving households (NPISHs) to separate table
+  npishExp <- exp[341:367, ]
+  exp <- exp[-(341:367), ]
+  
+  # combine month and year data into 2nd row
+  exp[2,3:ncol(exp)] <- as.character(my(paste0(exp[2,3:ncol(exp)], " ", exp[1,3:ncol(exp)])))
+  exp <- exp[-1,]
+  exp[1, 2] <- "Date"
+
+  # add the date rows to the other tables
+  aggExp <- rbind(exp[1,], aggExp)
+  npishExp <- rbind(exp[1,], npishExp)
+
+# format prices tables (same as above)
+
+  pri <- prices[5:413, ]
+  aggPri <- pri[c(3, 369:409), ]
+  pri <- pri[-c(3, 369:409), ]
+  npishPri <- pri[341:367, ]
+  pri <- pri[-(341:367), ]
+  pri[2,3:ncol(pri)] <- as.character(my(paste0(pri[2,3:ncol(pri)], " ", pri[1,3:ncol(pri)])))
+  pri <- pri[-1,]
+  pri[1, 2] <- "Date"
+  aggPri <- rbind(pri[1,], aggPri)
+  npishPri <- rbind(pri[1,], npishPri)
+
+# format qua tables (same as above)
+
+  qua <- quantities[5:413, ]
+  aggQua <- qua[c(3, 369:409), ]
+  qua <- qua[-c(3, 369:409), ]
+  npishQua <- qua[341:367, ]
+  qua <- qua[-(341:367), ]
+  qua[2,3:ncol(qua)] <- as.character(my(paste0(qua[2,3:ncol(qua)], " ", qua[1,3:ncol(qua)])))
+  qua <- qua[-1,]
+  qua[1, 2] <- "Date"
+  aggQua <- rbind(qua[1,], aggQua)
+  npishQua <- rbind(qua[1,], npishQua)
+  
+# remove the original tables
+  
+rm(expenditures)
+rm(prices)
+rm(quantities)
+  
+```
+
+## Query the Data
+
+The following function allows querying the main tables (exp, qua, and pri) based on item levels, where goods and services are level 1; durable goods, nondurable goods, and HH cons exp on services are level 2; and so on.  Often, we'll want the lowest (i.e. most granular level), which can be retrieved with the lowestLevel = T parameter.
+
+```{r make ts function}
+
+makeTimeSeries <- function(df, startDate = "1900-01-01", endDate = "2500-01-01", onlyLowestLevel = T, removeNAs = T){
+
+  # make data params actual dates
+  startDate = ymd(startDate)
+  endDate = ymd(endDate)
+  
+  #########################################
+  # adjust start and end dates
+  
+  x <- ymd(df[1, 3:ncol(df)]) # get the dates from the tables
+
+  # if specified start/end date is/are out of bounds, then set it/them to the first/last date
+  if (startDate < x[1]) { startDate <- x[1] }
+  if (endDate > x[length(x)]) { endDate <- x[length(x)] }
+  
+  cutLateYears <- ncol(df) - sum(x > endDate)
+  
+  if(cutLateYears <= ncol(df)){ 
+    df <- df[, 1:cutLateYears] 
+  }
+  
+  cutEarlyYears <- sum(x < startDate)
+  
+  if(cutEarlyYears > 1){ 
+    df <- df[,-(3:(cutEarlyYears+2))] 
+  }
+   
+  #########################################
+  # remove rows with NAs
+  # this will ensure that levels that have sub-levels but not full data for them get marked as the lowest level
+  # but those lower levels will be dropped. usually, NAs are due to new products, 
+  # so what gets cut out here will depend on the time frame, which is why I've run the start/end dates cut prior to this
+  
+  if (removeNAs){ df <- na.omit(df) }
+  
+  ############################################
+  ### create a new level system for categories
+  
+  # find number of preceding spaces (the function tells us position of first non-space, so subtract one from that)
+  # (and there are 4 spaces for each additional levels, so divide by 4)
+  numSpac <- (regexpr("[A-Z0-9]", df[, 2]) - 1) / 4
+  
+  n <- 2 # start off on the 2nd row, the first is a header row 
+  # current level (higher number means lower sublevel), there won't be a 9th level, it's there so the 2nd loop doesn't throw NAs
+  cl <- c(0, 0, 0, 0, 0, 0, 0, 0, 0) 
+  upLvl <- 0 # goes up by one if we move back to a higher category level
+  lp <- 1 # current position in level
+  
+  level <- vector("list", nrow(df)) # this will be the actual level code
+  level[[1]] <- "Level"
+  lowestLevel <- vector("list", nrow(df)) # this will indicate if the current level has no sub-levels
+  lowestLevel[[1]] <- "lowestLevel"
+
+  while (n <= nrow(df)){
+    if (numSpac[n] > numSpac[n-1]){ # move to sublevel, set previous row's lowestLevel to 0, and zero out upLvl
+      lp <- lp + 1  
+    }
+    else if (numSpac[n] < numSpac[n-1]){ # move to higher level
+      lp <- lp - (numSpac[n-1] - numSpac[n]) # determine level position based on how far we dropped back
+      cl[lp+1:8] <- 0 # zero out levels to right of this higher level
+
+    }
+    cl[lp] <- cl[lp] + 1
+    
+    level[n] <- paste(cl[1], cl[2], cl[3], cl[4], cl[5], cl[6], cl[7], cl[8], cl[9], sep = ".")
+    n <- n + 1
+  }
+  
+  # add the level column to the tables
+  df <- add_column(df, "Level" = level, .after = 1)
+  
+  n <- 2
+  while (n < nrow(df)){  
+    # if the first zero in the current row appears earlier than in the next row, then the next item is a sublevel and this one isn't the lowest
+    if (str_locate(df$Level[n], "0")[1] < str_locate(df$Level[n+1], "0")[1]){
+      lowestLevel[n] <- 0
+    } else { lowestLevel[n] <- 1 }
+    n <- n + 1
+  }
+  # the loop won't pick up the last the row so do that manually
+  # it should always be 'other household services', which is a lowest level
+  lowestLevel[nrow(df)] <- 1
+  
+  # add the lowestLevel column to the tables
+  df <- add_column(df, "lowestLevel" = lowestLevel, .after = 2)
+  
+  # move first row to column names
+  names(df) <- as.character(unlist(df[1,]))
+  colnames(df)[2] <- "Category"
+  
+  # create bridge between level number and product category
+  if (onlyLowestLevel) { df  <- df[df$lowestLevel == 1, ] }
+  bridgeLvlCat <- df[,c(1, 2, 4)]
+  df <- df[-1,]
+  bridgeLvlCat <- bridgeLvlCat[-1,]
+  
+  # make level numbers row names
+  row.names(df) <- df[,2]
+
+  # transpose and pare down the base tables to only include the lowest levels
+  # if a category has sub-levels those are included but not the higher level (that the lower ones aggregate to)
+
+  df <- as.data.frame(t(df[,-(1:4)]))
+  df[,] <- as.numeric(unlist(df[,]))
+
+  # make the time series
+  df.ts <- ts(df, start = c(substr(startDate, 1, 4), substr(startDate, 6, 7)), end = c(substr(endDate, 1, 4), substr(endDate, 6, 7)), freq = 12)
+
+  # remove stuff
+  #rm(level, cl, lp, n, numSpac, upLvl, lowestLevel, cutEarlyYears, cutLateYears, startDate, endDate, x, onlyLowestLevel, removeNAs)
+
+  output <- list(item = df, level = as.character(bridgeLvlCat[, 2]), name = trimws(bridgeLvlCat[, 3]), 
+                 line = bridgeLvlCat[, 1], startDate = startDate, endDate = endDate)
+
+  return(output)
+}
+
+```
+
+Below is some sample code for plotting a selection from the table.
+
+```{r plot a series}
+
+# get the table from the function
+priSeries <- makeTimeSeries(pri)
+
+# selection an item by number
+i <- 130
+
+# make it a time series (for some reason I could never get it to come out a ts from the function)
+series <- ts(quaSeries$item[i], start = as.numeric(substr(quaSeries$startDate, 1, 4)), end = as.numeric(substr(quaSeries$endDate, 1, 4)), freq = 12)
+
+# plot the series
+plot(series, main = quaSeries$name[i], ylab = "Price")
+
+```
+
+Export the tables to CSV.
+
+```{r save tables to csv}
+
+# get the table from the function
+priSeries <- makeTimeSeries(pri)
+quaSeries <- makeTimeSeries(qua)
+expSeries <- makeTimeSeries(exp)
+
+p <- priSeries$item
+colnames(p) <- priSeries$name 
+
+q <- quaSeries$item
+colnames(q) <- quaSeries$name
+
+e <- expSeries$item
+colnames(e) <- expSeries$name
+
+write.csv(p, "prices.csv")
+write.csv(q, "quantities.csv")
+write.csv(e, "expenditures.csv")
+
+rm(p, q, e, priSeries, quaSeries, expSeries)
+
+```
+
+Select high inflation items for analysis.
+
+```{r save tables to csv}
+
+# get the table from the function
+priSeries <- makeTimeSeries(pri, startDate = "1983-01-01")
+quaSeries <- makeTimeSeries(qua, startDate = "1983-01-01")
+expSeries <- makeTimeSeries(exp, startDate = "1983-01-01")
+
+p <- priSeries$item
+colnames(p) <- priSeries$name 
+
+q <- quaSeries$item
+colnames(q) <- quaSeries$name
+
+e <- expSeries$item
+colnames(e) <- expSeries$name
+
+priS <- p[, c(1:5, 7, 8, 47, 48, 50, 84, 85, 89, 90)]
+quaS <- q[, c(1:5, 7, 8, 47, 48, 50, 84, 85, 89, 90)]
+expS <- e[, c(1:5, 7, 8, 47, 48, 50, 84, 85, 89, 90)]
+
+write.csv(priS, "pricesSelect.csv")
+write.csv(quaS, "quantitiesSelect.csv")
+write.csv(expS, "expendituresSelect.csv")
+
+rm(p, q, e, priSeries, quaSeries, expSeries)
+
+
+```
+
+

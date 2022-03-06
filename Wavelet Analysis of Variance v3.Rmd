@@ -1,0 +1,1594 @@
+---
+title: "Wavelet Analysis of Variance"
+author: "Erik Dean"
+date: "1/21/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+# don't output warnings, code, messages in markdown
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, echo = F) 
+
+# import packages we need (and maybe some we don't). 
+# run install.packages("") on each of these if you haven't before
+
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(broom)
+library(lubridate)
+library(gtsummary)
+library(tidyverse)
+library(plotly)
+library(reshape)
+library(viridis)
+library(tibble)
+library(forecast)
+library(quantmod)
+library(fpp3)
+library(zoo)
+library(vars)
+library(WaveletComp)
+library(wavethresh)
+library(waveslim)
+library(pander)
+
+# set color theme for plots
+
+scale_colour_brewer_d <- function(...) {
+  scale_colour_brewer(palette = "Dark2", ...)
+}
+
+scale_fill_brewer_d <- function(...) {
+  scale_fill_brewer(palette = "Dark2", ...)
+}
+
+options(
+  ggplot2.discrete.colour = scale_colour_brewer_d,
+  ggplot2.discrete.fill = scale_fill_brewer_d
+)
+
+```
+
+## Description
+
+This RMD covers analysis of variance using discrete wavelet transforms.  I'll pull mostly from Gencay et al (2001) and the waveslim package.  The ultimate goal here is to categorize our inflation data according to fine vs. coarse variance--that is, items whose 'energy' occurs mainly at high frequencies (say, a few months) versus lower frequencies (say, a couple years)-- and price-quantity correlation. Hopefully, this will give us something like the categories that Gardiner Means produced as administered prices versus market prices.
+
+In the sections that follow, I will...
+
+* Import the BEA data (see Process PCE Data.Rmd) and provide code for querying the data
+* Analyze the energy composition of the price data
+* Analyze the price-quantity correlations
+* Categorize items
+
+I'll finish with some preliminary analysis of the relationship between administered prices vs. market prices and the pandemic inflation.
+
+## Data
+
+The following code (not shown in markdown) will import and format the BEA data from csv tables.
+
+```{r import and format tables, echo = F}
+
+#clear the stuff
+
+rm(list = ls())
+
+# import the tables
+
+expenditures <- read.csv("245U.csv", header = F, na.strings = "---")
+prices <- read.csv("244U.csv", header = F, na.strings = "---")
+quantities <- read.csv("243U.csv", header = F, na.strings = "---")
+
+# format expenditures tables
+
+  # remove title rows (1:4) and footnotes (410:414)
+  exp <- expenditures[5:413, ]
+  
+  # move aggregates to separate table
+  aggExp <- exp[c(3, 369:409), ]
+  exp <- exp[-c(3, 369:409), ]
+  
+  # move non-profit institutions serving households (NPISHs) to separate table
+  npishExp <- exp[341:367, ]
+  exp <- exp[-(341:367), ]
+  
+  # combine month and year data into 2nd row
+  exp[2,3:ncol(exp)] <- as.character(my(paste0(exp[2,3:ncol(exp)], " ", exp[1,3:ncol(exp)])))
+  exp <- exp[-1,]
+  exp[1, 2] <- "Date"
+
+  # add the date rows to the other tables
+  aggExp <- rbind(exp[1,], aggExp)
+  npishExp <- rbind(exp[1,], npishExp)
+
+# format prices tables (same as above)
+
+  pri <- prices[5:413, ]
+  aggPri <- pri[c(3, 369:409), ]
+  pri <- pri[-c(3, 369:409), ]
+  npishPri <- pri[341:367, ]
+  pri <- pri[-(341:367), ]
+  pri[2,3:ncol(pri)] <- as.character(my(paste0(pri[2,3:ncol(pri)], " ", pri[1,3:ncol(pri)])))
+  pri <- pri[-1,]
+  pri[1, 2] <- "Date"
+  aggPri <- rbind(pri[1,], aggPri)
+  npishPri <- rbind(pri[1,], npishPri)
+
+# format qua tables (same as above)
+
+  qua <- quantities[5:413, ]
+  aggQua <- qua[c(3, 369:409), ]
+  qua <- qua[-c(3, 369:409), ]
+  npishQua <- qua[341:367, ]
+  qua <- qua[-(341:367), ]
+  qua[2,3:ncol(qua)] <- as.character(my(paste0(qua[2,3:ncol(qua)], " ", qua[1,3:ncol(qua)])))
+  qua <- qua[-1,]
+  qua[1, 2] <- "Date"
+  aggQua <- rbind(qua[1,], aggQua)
+  npishQua <- rbind(qua[1,], npishQua)
+  
+# remove the original tables
+  
+rm(expenditures)
+rm(prices)
+rm(quantities)
+  
+```
+
+### Query the Data
+
+The following function (not shown in markdown) allows querying the main tables (exp, qua, and pri) based on item levels, where goods and services are level 1; durable goods, nondurable goods, and HH cons exp on services are level 2; and so on.  Often, we'll want the lowest (i.e. most granular level), which can be retrieved with the lowestLevel = T parameter.  This is the same as in Process PCE Data.Rmd
+
+```{r make ts function, echo = F}
+
+makeTimeSeries <- function(df, startDate = "1900-01-01", endDate = "2500-01-01", onlyLowestLevel = T, removeNAs = T){
+
+  #df <- pri
+  #startDate <- "1980-01-01"
+  #endDate = "1990-01-01"
+  
+  # make data params actual dates
+  startDate = ymd(startDate)
+  endDate = ymd(endDate)
+  
+  #########################################
+  # adjust start and end dates
+  
+  x <- ymd(df[1, 3:ncol(df)]) # get the dates from the tables
+
+  # if specified start/end date is/are out of bounds, then set it/them to the first/last date
+  if (startDate < x[1]) { startDate <- x[1] }
+  if (endDate > x[length(x)]) { endDate <- x[length(x)] }
+  
+  cutLateYears <- ncol(df) - sum(x > endDate)
+  
+  if(cutLateYears <= ncol(df)){ 
+    df <- df[, 1:cutLateYears] 
+  }
+  
+  cutEarlyYears <- sum(x < startDate)
+  
+  if(cutEarlyYears > 1){ 
+    df <- df[,-(3:(cutEarlyYears+2))] 
+  }
+   
+  #########################################
+  # remove rows with NAs
+  # this will ensure that levels that have sub-levels but not full data for them get marked as the lowest level
+  # but those lower levels will be dropped. usually, NAs are due to new products, 
+  # so what gets cut out here will depend on the time frame, which is why I've run the start/end dates cut prior to this
+  
+  if (removeNAs){ df <- na.omit(df) }
+  
+  ############################################
+  ### create a new level system for categories
+  
+  # find number of preceding spaces (the function tells us position of first non-space, so subtract one from that)
+  # (and there are 4 spaces for each additional levels, so divide by 4)
+  numSpac <- (regexpr("[A-Z0-9]", df[, 2]) - 1) / 4
+  
+  n <- 2 # start off on the 2nd row, the first is a header row 
+  # current level (higher number means lower sublevel), there won't be a 9th level, it's there so the 2nd loop doesn't throw NAs
+  cl <- c(0, 0, 0, 0, 0, 0, 0, 0, 0) 
+  upLvl <- 0 # goes up by one if we move back to a higher category level
+  lp <- 1 # current position in level
+  
+  level <- vector("list", nrow(df)) # this will be the actual level code
+  level[[1]] <- "Level"
+  lowestLevel <- vector("list", nrow(df)) # this will indicate if the current level has no sub-levels
+  lowestLevel[[1]] <- "lowestLevel"
+
+  while (n <= nrow(df)){
+    if (numSpac[n] > numSpac[n-1]){ # move to sublevel, set previous row's lowestLevel to 0, and zero out upLvl
+      lp <- lp + 1  
+    }
+    else if (numSpac[n] < numSpac[n-1]){ # move to higher level
+      lp <- lp - (numSpac[n-1] - numSpac[n]) # determine level position based on how far we dropped back
+      cl[lp+1:8] <- 0 # zero out levels to right of this higher level
+
+    }
+    cl[lp] <- cl[lp] + 1
+    
+    level[n] <- paste(cl[1], cl[2], cl[3], cl[4], cl[5], cl[6], cl[7], cl[8], cl[9], sep = ".")
+    n <- n + 1
+  }
+  
+  # add the level column to the tables
+  df <- add_column(df, "Level" = level, .after = 1)
+  
+  n <- 2
+  while (n < nrow(df)){  
+    # if the first zero in the current row appears earlier than in the next row, then the next item is a sublevel and this one isn't the lowest
+    if (str_locate(df$Level[n], "0")[1] < str_locate(df$Level[n+1], "0")[1]){
+      lowestLevel[n] <- 0
+    } else { lowestLevel[n] <- 1 }
+    n <- n + 1
+  }
+  # the loop won't pick up the last the row so do that manually
+  # it should always be 'other household services', which is a lowest level
+  lowestLevel[nrow(df)] <- 1
+  
+  # add the lowestLevel column to the tables
+  df <- add_column(df, "lowestLevel" = lowestLevel, .after = 2)
+  
+  # move first row to column names
+  names(df) <- as.character(unlist(df[1,]))
+  colnames(df)[2] <- "Category"
+  
+  # create bridge between level number and product category
+  if (onlyLowestLevel) { df  <- df[df$lowestLevel == 1, ] }
+  bridgeLvlCat <- df[,c(1, 2, 4)]
+  df <- df[-1,]
+  bridgeLvlCat <- bridgeLvlCat[-1,]
+  
+  # make level numbers row names
+  row.names(df) <- df[,2]
+
+  # transpose and pare down the base tables to only include the lowest levels
+  # if a category has sub-levels those are included but not the higher level (that the lower ones aggregate to)
+
+  df <- as.data.frame(t(df[,-(1:4)]))
+  df[,] <- as.numeric(unlist(df[,]))
+
+  # make the time series
+  df.ts <- ts(df, start = c(substr(startDate, 1, 4), substr(startDate, 6, 7)), end = c(substr(endDate, 1, 4), substr(endDate, 6, 7)), freq = 12)
+
+  # remove stuff
+  #rm(level, cl, lp, n, numSpac, upLvl, lowestLevel, cutEarlyYears, cutLateYears, startDate, endDate, x, onlyLowestLevel, removeNAs)
+
+  output <- list(item = df, level = as.character(bridgeLvlCat[, 2]), name = trimws(bridgeLvlCat[, 3]), 
+                 line = bridgeLvlCat[, 1], startDate = startDate, endDate = endDate)
+
+  return(output)
+}
+
+```
+
+### Plot the Data
+
+This is an example of a plot from the data--specifically, quantities.
+
+```{r plot a series}
+
+endDate <- as.Date("2021-11-01")
+startDate <- as.Date("1970-01-01")
+
+# get the table from the function
+quaSeries <- makeTimeSeries(qua, startDate = startDate, endDate = endDate)
+
+# selection an item by number
+i <- 130
+
+# make it a time series (for some reason I could never get it to come out a ts from the function)
+series <- ts(quaSeries$item[i], start = as.numeric(substr(quaSeries$startDate, 1, 4)), end = as.numeric(substr(quaSeries$endDate, 1, 4)), freq = 12)
+
+# plot the series
+plot(series, main = quaSeries$name[i])
+
+```
+
+This will plot price data on a single plot. It's set up to run all items, but commented out.
+
+```{r plot another series}
+
+endDate <- as.Date("2021-11-01")
+startDate <- as.Date("1999-01-01")
+
+# get the table from the function
+priSeries <- makeTimeSeries(pri, startDate = startDate, endDate = endDate)
+
+for(i in 1:length(priSeries$name)){
+  # make it a time series (for some reason I could never get it to come out a ts from the function)
+  series <- ts(priSeries$item[i], start = as.numeric(substr(priSeries$startDate, 1, 4)), end = as.numeric(substr(priSeries$endDate, 1, 4)), freq = 12)
+  
+  # plot the series
+  plot(series, main = priSeries$name[i])
+}
+
+
+```
+
+I looked through each of these and a few things stood out:
+
+* New domestic and foreign auto prices are almost identical (so much so that I initially thought the data were messed up).  Maybe there's a market governance story to be told about the relationship between the auto manufacturers and the used car dealerships
+* The meat prices rose substantially early-pandemic and, except for poultry, have begun to come down.
+* Conversely, clothing and shoes look to have dropped early pandemic and come back up since
+* Gasoline seems to be tabulated in a funny way. Its showing around 70% of high levels around 2012-14, but gas prices are at about  $3.40 a gallon recently, compared to about $3.70 a gallon back then according to https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=EMM_EPM0_PTE_NUS_DPG&f=M
+* The house price data seems funny to me, showing a slowing of increase in the pandemic, not a sharp uptick as in the Case-Shiller: https://fred.stlouisfed.org/series/SPCS20RSA
+* A lot of items (e.g. the three hospitals items) look to be identical.  I'm guessing the BEA is just copying the more aggregate index numbers for prices to these lower level items, but that the quantity numbers will be different.  This is *something to check as it will throw off the price-quantity analysis.*.  I looked at the data in Excel and checked to see if there were any price or quantity series that were exactly equal to the one right before or after it and didn't find any.  However, there are a few that look like they're identical but a small but consistent amount off from each other.
+* There looks to have been a decent rise in the price of social assistance (esp. home for the elderly and residential mental health and substance abuse services). The increase isn't huge, but it's something I haven't heard about in the news.
+
+This will plot price and quantity data on a single plot. It's set up to run all items, but commented out. I'm going to use it to check out the issue of duplicate price series mentioned above.
+
+```{r plot p and q series, eval = F}
+
+endDate <- as.Date("2021-11-01")
+startDate <- as.Date("1999-01-01")
+
+# get the table from the function
+priSeries <- makeTimeSeries(pri, startDate = startDate, endDate = endDate)
+quaSeries <- makeTimeSeries(qua, startDate = startDate, endDate = endDate)
+
+for(i in 1:length(priSeries$name)){
+  # make it a time series (for some reason I could never get it to come out a ts from the function)
+  seriesP <- ts(priSeries$item[i], start = as.numeric(substr(priSeries$startDate, 1, 4)), end = as.numeric(substr(priSeries$endDate, 1, 4)), freq = 12)
+  seriesQ <- ts(quaSeries$item[i], start = as.numeric(substr(quaSeries$startDate, 1, 4)), end = as.numeric(substr(quaSeries$endDate, 1, 4)), freq = 12)
+  
+  # plot the series
+  #plot(seriesQ, col = "red", main = priSeries$name[i])
+  #lines(seriesP, col="green")
+  
+  
+  par(mar = c(5, 4, 4, 4) + 0.3)                                  # Additional space for second y-axis
+  plot(seriesQ, pch = 16, col = "red",                            # Create first plot
+       main = paste0(i, " ", priSeries$name[i]))     
+  par(new = TRUE)                                                 # Add new plot
+  plot(seriesP, pch = 17, col = "blue",           # Create second plot without axes
+    axes = FALSE, xlab = "", ylab = "")
+  axis(side = 4, at = pretty(range(seriesP)))     # Add second axis
+  mtext("Price (blue)", side = 4, line = 3)              # Add second axis label
+}
+
+```
+
+Here's the list of items sharing the same or very similar price data as the item(s) around them.
+
+```{r find same price items}
+
+# build an index of items with the same price numbers but different quantity numbers (by visual inspection)
+redundancies <- c(1:2, 32:35, 95, 96, 98:101, 103, 112:118, 120:121, 126:127, 142:144, 148:149, 151:152, 154:155, 170:171, 182:183, 197:198, 211:212, 215:216)
+
+for(i in 1:length(redundancies)){
+  print(paste0(redundancies[i], " ", priSeries$name[redundancies[i]]))
+}
+
+```
+
+Note, the housing price numbers aren't identical, but they're very similar, so I included them here. Same with household insurance. Same with US travel outside US and US student expenditures. Same with new foreign and domestic autos. 
+
+## Energy Analysis
+
+Energy is defined as the sum of squared values of a vector.  Energy is proportional to variance, and the discrete wavelet transform is energy (variance) preserving.  Hence the sum of squared values of a time series (x) equals the sum of the sum of squared wavelet detail coefficients (d) across all scales (1 though J), including the smooth (s).  Gencay et al. (2001, 125) write this as
+
+$||x||^{2} = \sum_{j = 1}^{J}||d_j||^2 + ||s_J||^2$
+
+Where $||.||^2$ is just the sum of the squared values in the vector.  Hence the sum of the squared values of the original series equals the sum of the squared coefficients of all of the wavelet scales, including the smooth.
+
+Using data from IBM's stock returns in the 1960s, Gencay et al. (2001, 127-8) plot the wavelet energies "normalized by $N^{-1}$," which is to say they take the sum of squared coefficients then divide by length (i.e. number of coefficients) for each scale.  Dividing by number of coefficients is necessary with a DWT because, by definition, each higher (coarser) scale will have half as many observations as the (finer) scale below it, such that finer scales will typically have higher sums of squared coefficients simply for having much larger numbers of coefficients.  
+
+In terms of choosing the wavelet, the authors also note that as "the length of the wavelet filter increases, the approximation to an ideal band-pass filter improves and therefore the wavelet filter will better capture the variability in the frequency intervals associated with the DWT wavelet coefficients."  Hence, below I will use the LA(8) wavelet, not the Haar (which has length 2).
+
+So the idea here is to see what frequencies have the most energy--which is similar to asking whether the time series has a lot of long-period versus short-period variance. To demonstrate, the following will decompose the energy of the DWT for a single item.  Note, our data has around 745 months.  We may move on to MODWTs later, which don't care about this, but standard DWTs need dyadic lengths ($2^2 = 4, 2^3 = 8, 16, 32, 64, 125, 256,$ 256, &c.). _However_, partial DWTs (see Gencay et al. 2001, 124) should work just as well, and since we really don't care about frequencies beyond a business cycle (which we'll call 128 months at most), then we really just need a sample size divisible by 128.  This means 640 should work for us, so the following starts at the most recent month available (currently, Nov. 2021) and grabs everything 641 months back (to 1968), making 640 observations after taking the difference.
+
+*Note, we may want to consider cutting this down to to start at Jan. of 1983 for two reasons: first, Gyun Gu has shown that there was a significant change in corproate pricing, a trend toward much greater stability, at around 1983; and second, data for net transactions and used truck margins for used light trucks start in Jan of 1983.  Because the used auto market has been such a big part of the pandemic inflation (and presumably used light trucks are, too, though I haven't confirmed that), it may be advisable to include these details. Note, also, that other important items don't start 'til later as well, including video and audio streaming and rental (1982) and and software (1977).
+
+To start at 1983 would be 467 months up to Nov. 2021.  But that's not ideal because the closest we could get with a partial DWT would be 384 months, running from late 1989 to the present.  We could go down to a J = 6 (64 months) partial DWT, which would allow for 448 months; or we could strictly use MODWTs. But, having finished this Rmd at this point, I'd recommend using the shorter period (384 months) for the energy analysis below, then the longer period (1983 and on) for the price-quantity correlation, since it relies on MODWT.
+
+The following code will produce the breakdown of energies by scale for the price data of eggs as an example.
+
+```{r bar graph of energies}
+
+# get start and end dates to make a series length of 640
+endDate <- as.Date("2021-11-01")
+startDate <- as.Date(endDate) %m-% months(640)
+
+# get the table from the function
+priSeries <- makeTimeSeries(pri, startDate = startDate, endDate = endDate)
+
+# start date moves up a month for the difference (below)
+startDate <- as.Date(startDate) %m+% months(1)
+
+# selection an item by number
+i <- 50
+
+itemTable <- data.frame()
+
+  # take the first differences of the logs of price (Gencay et al. usually do this)
+  diff <- diff(log(priSeries$item[[i]]))
+  
+  # make it a time series (for some reason I could never get it to come out a ts from the function)
+  
+  startYM <- as.character(startDate) # I'm sure there's a better way of doing this, but it works
+  endYM <- as.character(endDate)
+  
+  series <- ts(diff, start = c(substr(startYM, 1, 4), substr(startYM, 6, 7)), end = c(substr(endYM, 1, 4), substr(endYM, 6, 7)), freq = 12)
+  
+  ## (partial) Discrete Wavelet Transform with the LA(8) wavelet
+  priDWT <- dwt(series, "la8", 7)
+  names(priDWT) <- c("d1", "d2", "d3", "d4", "d5", "d6", "d7", "s7")
+  
+  # now compare the energies for each scale (but not the smooth)
+  
+  energies <- vector()
+  
+  for(x in 1:7){
+    energies[x] <- sum(priDWT[[x]]^2)/length(priDWT[[x]])
+  }
+  scaleNames <- c(1:7)
+
+  # plot the energies
+  barplot(energies ~ scaleNames, xlab = "Scale", main = priSeries$name[i])
+
+```
+
+You can see that eggs have a fairly high degree of energy (the average scale energy, excluding the smooth, across all scales and items came out to about 0.00016, partly raised by extremely high energies for securities commissions). But you can also see that most of that energy is in scales 4 and 5, which correspond to 16-32 and 32-64 month periods--i.e. we're looking mostly at price changes between about 1-5 years.
+
+### Scale Energies for All Items
+
+```{r set start and end dates for subsequent Partial DWT analysis}
+
+# see text above. We only want data starting with 1983, but the closest we can get for a partial DWT is 384 months
+
+# get start and end dates to make a series length of 640
+
+startDate <- as.Date(endDate) %m-% months(384)
+
+priSeries <- makeTimeSeries(pri, startDate = startDate)
+endDate <- as.Date(priSeries$endDate)
+
+```
+
+The following (not shown in markdown) will produce a table of all (least aggregated) items for this time period, including whether they're durable goods, nondurable goods, or services, and their energies by scale (not including the smooth). The table is ordered by d1 energy (that is, the energy of the finest scale, which represents price changes over 2-4 months).
+
+```{r energies for all items}
+
+# get start and end dates to make a series length of 640
+#endDate <- as.Date("2021-11-01")
+#startDate <- as.Date(endDate) %m-% months(640)
+
+# get the table from the function
+# note: i'm going to grab the qua and exp data here for later use
+priSeries <- makeTimeSeries(pri, startDate = startDate, endDate = endDate)
+quaSeries <- makeTimeSeries(qua, startDate = startDate, endDate = endDate)
+expSeries <- makeTimeSeries(exp, startDate = startDate, endDate = endDate)
+
+# start date moves up a month for the difference (below)
+startDate <- as.Date(startDate) %m+% months(1)
+
+# selection an item by number
+i <- 1
+
+itemTable <- data.frame()
+
+for(i in 1:(length(priSeries$level))){
+
+  # take the first differences of logs
+  diff <- diff(log(priSeries$item[[i]]))
+  
+  # make it a time series (for some reason I could never get it to come out a ts from the function)
+  
+  startYM <- as.character(startDate) # I'm sure there's a better way of doing this, but it works
+  endYM <- as.character(endDate)
+  
+  series <- ts(diff, start = c(substr(startYM, 1, 4), substr(startYM, 6, 7)), end = c(substr(endYM, 1, 4), substr(endYM, 6, 7)), freq = 12)
+  
+  ## (partial) Discrete Wavelet Transform with the LA(8) wavelet
+  priDWT <- dwt(series, "la8", 7)
+  names(priDWT) <- c("d1", "d2", "d3", "d4", "d5", "d6", "d7", "s7")
+  
+  # now compare the energies for each scale (but not the smooth)
+  
+  energies <- vector()
+  
+  for(x in 1:7){
+    energies[x] <- sum(priDWT[[x]]^2)/length(priDWT[[x]])
+  }
+  scaleNames <- c(1:7)
+
+  # item category (durable good, nondurable good, or service)
+  cn <- substr(priSeries$level[i], 1, 3)
+  if(cn == "1.1"){ cat <- "Durable Good"}
+  else if(cn == "1.2"){ cat <- "Nondurable Good"}
+  else if(cn == "2.1"){ cat <- "Service"}
+
+  itemTable <- rbind(itemTable, c(priSeries$name[i], cat, energies))
+  class(itemTable[, 3])
+  # plot the energies
+  #barplot(energies ~ scaleNames, xlab = "Scale", main = priSeries$name[i])
+
+}
+
+colnames(itemTable) <- c("Item", "Category", "d1.energy", "d2.energy", "d3.energy", "d4.energy", "d5.energy", "d6.energy", "d7.energy")
+
+itemTable[, 3:9] <- sapply(itemTable[, 3:9], as.numeric)
+
+avgD1Energy <- mean(as.numeric(itemTable[, 3]))
+
+avgAllEnergy <- mean(as.matrix((itemTable[, 3:9])))
+
+itemTable <- itemTable[order(as.numeric(itemTable$d1.energy)),]
+
+#make the table
+require(pander)
+panderOptions('table.split.table', Inf)
+panderOptions('digits', 6)
+panderOptions('round', 5)
+#pander(itemTable, style = 'rmarkdown')
+
+```
+
+And here are some histograms (one for each scale) to show the distribution of items in terms of energy.  (Note, the 3 items with very high energies, televisions, other video equipment, and securities commissions, are not included).
+
+```{r energy histograms}
+
+#par(mfrow = c(3, 2))
+for (i in 3:9){
+  hist(itemTable[1:189,i], breaks = 95, main = paste0("Scale", " ", as.character(i-2)))
+}
+
+```
+
+The following simply gives the items' ranks in terms of energies at each scale (where rank 1 indicates lowest energy among all items at that scale).  The table is ordered by the fourth scale, but it is not printed in the markdown.
+
+```{r rank items by scale energies}
+
+# produce a data.frame of all the items from above with their 
+# ranks in terms of energy at each scale
+
+itemEnergyRanks <- itemTable
+
+for(i in 3:9){
+  itemEnergyRanks <- itemEnergyRanks[order(as.numeric(itemEnergyRanks[, i])),]
+  itemEnergyRanks <- cbind(itemEnergyRanks, 1:nrow(itemEnergyRanks))
+}
+
+itemEnergyRanks <- itemEnergyRanks[, -(3:9)]
+
+itemEnergyRanks <- itemEnergyRanks[order(itemEnergyRanks[, 6]),]
+
+colnames(itemEnergyRanks)[3:9] <- c("d1en.rank", "d2en.rank", "d3en.rank", "d4en.rank", "d5en.rank", "d6en.rank", "d7en.rank")
+
+#make the tables
+require(pander)
+panderOptions('table.split.table', Inf)
+panderOptions('digits', 6)
+panderOptions('round', 4)
+#pander(itemEnergyRanks, style = 'rmarkdown')
+
+```
+
+### Ratio of Detail Energies
+
+This might not be much help, but for the purposes of finding a clear cut-off point between high-energy items (i.e. market items, presumably looking at short-periods--that is, the first scale or two) versus low-energy items (i.e. administered prices), here are histograms that sum the energies for the first two details and for the 3rd-5th details.
+
+```{r energy histograms grouped scales}
+
+hist(as.numeric(itemTable[50:189, 3]) + as.numeric(itemTable[50:189, 4]), breaks = 50, main = "Scales 1 & 2")
+
+hist(as.numeric(itemTable[50:189, 5]) + as.numeric(itemTable[50:189, 6]) + as.numeric(itemTable[50:189, 7]), breaks = 50, main = "Scales 3-5")
+
+e1st2Scales <- data.frame("Item" = itemTable$Item, "Energy" = as.numeric(itemTable[, 3]) + as.numeric(itemTable[, 4]))
+
+```
+
+It seems like items with combined energies at the first two scales of less than 0.0004 might appropriately be called administered prices, with those greater being called market prices. But, we'll want to look into the matter more before calling that the distinguishing characteristic.
+
+Out of curiosity, I'm going to build a table of items and their 1st to 4th scale energies.  My thinking here is that there might be groups of items with higher 2-4 months energy (the first scale) but low 16-32 month energies (the market prices), items with the opposite (the admin prices), and items with either high or low energies at both scales (the indeterminate). So I'm looking for a bimodal distribution here.
+
+```{r 1st to 4th scale energy ratios}
+
+eRatio1to4 <- data.frame("Item" = itemTable[,1], "Ratio" = (itemTable[, 3] / itemTable[, 6]))
+
+hist(eRatio1to4[, 2], breaks = 50, main = "Ratio of Scale 1 Energy to Scale 4 Energy", xlim = c(0, 6))
+
+```
+
+They seem to be more or less normally distributed around 1, that is, approximately the same energy at scale 1 as scale 4 (this is roughly true for scale 1 to scales 2, 3, and 5 as well).  A ratio of 1.5 or 2 might make for a good cutoff (ratios above being market prices, below being admin prices), but it seems pretty arbitrary to me.
+
+The ratio of the first detail energy to the fifth (32-64 months) is similar, so let's just pick a ratio here of 2 as the cutoff.
+
+```{r 1st to 5th scale energy ratios}
+
+eRatio1to5 <- data.frame("Item" = itemTable[,1], "Ratio" = (itemTable[, 3] / itemTable[, 7]))
+
+hist(eRatio1to5[, 2], breaks = 60, main = "Ratio of Scale 1 Energy to Scale 5 Energy", xlim = c(0, 10))
+
+```
+
+This seems like it might be a workable approach as the 5th scale (representing about 4 years) (1) is long enough to clearly represent the sort of long-term price changes we'd expect to see from administered prices, (2) is substantially longer than one year, such that we aren't picking up seasonal pricing, but (3) isn't so long as to potentially pick up business cycle fluctuations. 
+
+After looking at the items that this approach would categorize as market, I don't think this is a good approach. I'm guessing the issue is that some items have very low scale 5 energies.
+
+## Price-Quantity Correlations
+
+```{r set start and end dates for subsequent MODWT analysis}
+
+# From here on out we'll use MODWTs so we can take the full data going back to 1983
+
+# get start and end dates to make a series length of 640
+#endDate <- as.Date("2021-11-01")
+startDate <- as.Date("1983-01-01")
+
+```
+
+As Gencay et al. (2001, 241) explain, for a series $\textbf{x} = (x_0, x_1, ..., x_{N-1})$ of length N, a MODWT of order J produces wavelet coefficients $\tilde{w}$. An unbiased estimator of the wavelet variance is given by:
+
+$$\tilde{\sigma}^{2}_{x}(\lambda_j) = \frac{1}{\tilde{N_j}} \sum_{t=L_j-1}^{N-1} \tilde{w}^{2}_{j,t}$$
+
+Where $L_j = (2^j - 1)(L - 1) + 1$ is the length of scale $\lambda_j$ wavelet filter and $\tilde{N}_j = N - L_j + 1$ is the number of coefficients unaffected by the boundary. Confidence intervals can be estimated for the above in a variety of ways (see Gencay et al. 2001, 242-4). 
+
+Wavelet covariance and correlation--i.e. for each scale of the wavelet transform--can similarly be estimated for a bivariate time series--i.e., for our study, price and quantity for a given item.  Likewise, lags and leads can be introduced to obtain wavelet cross-covariance and cross-correlation; however, because DWTs are not translation invariant, these require use of the MODWT (see Gencay et al. 2001, 252-3).  The unbiased estimator for the wavelet covariance of a bivariate series $X = ((x_{1,0}, x_{2,0}, (x_{1,1}, x_{2,1}),..., (x_{1,N-1}, x_{2,N-1})))$ and MODWT coefficients of the two series, $\tilde{w}_1$ and $\tilde{w}_2$, is given by:
+
+$$\tilde{\gamma}_{X}(\lambda_j) = \frac{1}{\tilde{N_j}} \sum_{l=L_j-1}^{N-1} \tilde{w}_{1,j,l} \tilde{w}_{2,j,l}$$
+
+(Gencay et al. 2001, 253).  Confidence intervals can be estimated for wavelet covariance as in Gencay et al. (2001, 254-5).
+
+Finally, wavelet correlation simply normalizes the wavelet covariance by the variance of the wavelet coefficients of the two series:
+
+$$\rho_X(\lambda_j) = \frac{\gamma_X(\lambda_j)}{\sigma_1(\lambda_j)\sigma_2(\lambda_j)}$$
+
+which, as usual, will take a value between 0 and 1. The _biased_ estimator for this can be computed with the previous equations (Gencay et al. 2001, 258-9), and confidence intervals can be calculated as in Gencay et al. (2001, 259-60).
+
+To demonstrate, below are, for three items, the original series (difference of logs) and MODWT coefficients (first plot: price; second: quantity) and cross correlation plots with red lines indicating 95% confidence intervals. The code for the correlation component of the following is taken directly from the _waveslim_ documentation (for the function spin.covariance) and recreates Figure 7.9 in Gencay et al. (2001, 261) but using our price and quantity data.
+
+First, for gasoline.
+
+```{r p-q correlations for gas}
+
+i <- 69 # gas
+
+# take the first differences of logs
+diffPri <- diff(log(priSeries$item[[i]]))
+diffQua <- diff(log(quaSeries$item[[i]]))
+  
+# make it a time series (for some reason I could never get it to come out a ts from the function)
+startYM <- as.character(startDate) # I'm sure there's a better way of doing this, but it works
+endYM <- as.character(endDate)
+  
+seriesPri <- ts(diffPri, start = c(substr(startYM, 1, 4), substr(startYM, 6, 7)), end = c(substr(endYM, 1, 4), substr(endYM, 6, 7)), freq = 12)
+seriesQua <- ts(diffQua, start = c(substr(startYM, 1, 4), substr(startYM, 6, 7)), end = c(substr(endYM, 1, 4), substr(endYM, 6, 7)), freq = 12)
+
+wf <- "la8"
+n <- length(seriesPri)
+J <- 6
+
+
+priModwt <- modwt(seriesPri, wf, n.levels = J)
+priModwt.bw <- brick.wall(priModwt, wf)
+
+quaModwt <- modwt(seriesQua, wf, n.levels = J)
+quaModwt.bw <- brick.wall(quaModwt, wf)
+
+# plot the MODWTs
+
+names(priModwt) <- c("2-4m", "4-8m", "8-16m", "16-32m", "32-64m", "64-128m", ">128m")
+par(mfcol=c(8,1), pty="m", mar=c(5-4,4,4-3,4))
+plot.ts(seriesPri, axes=FALSE, ylab="", main = paste0(priSeries$name[[i]], " ", "(monthly price change)"))
+for(x in 1:7){
+  plot.ts(priModwt[[x]], axes=FALSE, ylab=names(priModwt)[x])
+}
+
+names(quaModwt) <- c("2-4m", "4-8m", "8-16m", "16-32m", "32-64m", "64-128m", ">128m")
+par(mfcol=c(8,1), pty="m", mar=c(5-4,4,4-3,4))
+plot.ts(seriesQua, axes=FALSE, ylab="", main = paste0(priSeries$name[[i]], " ", "(monthly price change)"))
+for(x in 1:7){
+  plot.ts(quaModwt[[x]], axes=FALSE, ylab=names(quaModwt)[x])
+}
+
+# cross correlation
+
+lmax <- 36
+cross.cor <- NULL
+
+for(y in 1:J) {
+  scOutput <- spin.correlation(priModwt.bw[[y]], quaModwt.bw[[y]], lmax)
+  cross.cor <- cbind(cross.cor, scOutput)
+}
+
+cross.cor <- ts(as.matrix(cross.cor), start=-36, freq=1)
+
+dimnames(cross.cor) <- list(NULL, paste("Scale", 1:J))
+
+lags <- length(-lmax:lmax)
+
+# calculate 95% confidence intervals
+lower.ci <- tanh(atanh(cross.cor) - qnorm(0.975) / sqrt(matrix(trunc(n/2^(1:J)), nrow=lags, ncol=J, byrow=TRUE) - 3))
+upper.ci <- tanh(atanh(cross.cor) + qnorm(0.975) / sqrt(matrix(trunc(n/2^(1:J)), nrow=lags, ncol=J, byrow=TRUE) - 3))
+
+par(mfrow=c(2,1), las=1, pty="m", mar=c(2,4,1,2))
+
+for(i in J:1) {
+  plot(cross.cor[,i], ylim=c(-1,1), xaxt="n", xlab="Lag (months)",
+  ylab="", main = dimnames(cross.cor)[[2]][i])
+  axis(side=1, at=seq(-36, 36, by=12))
+  lines(lower.ci[,i], lty=1, col=2)
+  lines(upper.ci[,i], lty=1, col=2)
+  abline(h=0,v=0)
+}
+
+```
+
+Note that price and quantity for gasoline are fairly correlated at coarser scales with some significant correlations at various lags and leads. For instance, there is a negative contemporaneous (zero lag) correlation at scale four, which can be interpreted as: the price of oil and the quantity sold tend to move in opposite directions over a period of 16-32 months. A similar pattern in scale 3 suggests that this might be related to seasonal patterns.
+
+The correlations for gas are not as high as one might expect, though. A high price-quantity correlation that would more clearly indicate a market price is evident for fresh fruit:
+
+```{r p-q correlations for fresh fruits}
+
+i <- 52 # fresh fruits
+
+# take the first differences of logs
+diffPri <- diff(log(priSeries$item[[i]]))
+diffQua <- diff(log(quaSeries$item[[i]]))
+  
+# make it a time series (for some reason I could never get it to come out a ts from the function)
+startYM <- as.character(startDate) # I'm sure there's a better way of doing this, but it works
+endYM <- as.character(endDate)
+  
+seriesPri <- ts(diffPri, start = c(substr(startYM, 1, 4), substr(startYM, 6, 7)), end = c(substr(endYM, 1, 4), substr(endYM, 6, 7)), freq = 12)
+seriesQua <- ts(diffQua, start = c(substr(startYM, 1, 4), substr(startYM, 6, 7)), end = c(substr(endYM, 1, 4), substr(endYM, 6, 7)), freq = 12)
+
+wf <- "la8"
+n <- length(seriesPri)
+J <- 6
+
+
+priModwt <- modwt(seriesPri, wf, n.levels = J)
+priModwt.bw <- brick.wall(priModwt, wf)
+
+quaModwt <- modwt(seriesQua, wf, n.levels = J)
+quaModwt.bw <- brick.wall(quaModwt, wf)
+
+# plot the MODWTs
+
+names(priModwt) <- c("2-4m", "4-8m", "8-16m", "16-32m", "32-64m", "64-128m", ">128m")
+par(mfcol=c(8,1), pty="m", mar=c(5-4,4,4-3,4))
+plot.ts(seriesPri, axes=FALSE, ylab="", main = paste0(priSeries$name[[i]], " ", "(monthly price change)"))
+for(x in 1:7){
+  plot.ts(priModwt[[x]], axes=FALSE, ylab=names(priModwt)[x])
+}
+
+names(quaModwt) <- c("2-4m", "4-8m", "8-16m", "16-32m", "32-64m", "64-128m", ">128m")
+par(mfcol=c(8,1), pty="m", mar=c(5-4,4,4-3,4))
+plot.ts(seriesQua, axes=FALSE, ylab="", main = paste0(priSeries$name[[i]], " ", "(monthly price change)"))
+for(x in 1:7){
+  plot.ts(quaModwt[[x]], axes=FALSE, ylab=names(quaModwt)[x])
+}
+
+# cross correlation
+
+lmax <- 36
+cross.cor <- NULL
+
+for(y in 1:J) {
+  scOutput <- spin.correlation(priModwt.bw[[y]], quaModwt.bw[[y]], lmax)
+  cross.cor <- cbind(cross.cor, scOutput)
+}
+
+cross.cor <- ts(as.matrix(cross.cor), start=-36, freq=1)
+
+dimnames(cross.cor) <- list(NULL, paste("Scale", 1:J))
+
+lags <- length(-lmax:lmax)
+
+# calculate 95% confidence intervals
+lower.ci <- tanh(atanh(cross.cor) - qnorm(0.975) / sqrt(matrix(trunc(n/2^(1:J)), nrow=lags, ncol=J, byrow=TRUE) - 3))
+upper.ci <- tanh(atanh(cross.cor) + qnorm(0.975) / sqrt(matrix(trunc(n/2^(1:J)), nrow=lags, ncol=J, byrow=TRUE) - 3))
+
+par(mfrow=c(2,1), las=1, pty="m", mar=c(2,4,1,2))
+
+for(i in J:1) {
+  plot(cross.cor[,i], ylim=c(-1,1), xaxt="n", xlab="Lag (months)",
+  ylab="", main = dimnames(cross.cor)[[2]][i])
+  axis(side=1, at=seq(-36, 36, by=12))
+  lines(lower.ci[,i], lty=1, col=2)
+  lines(upper.ci[,i], lty=1, col=2)
+  abline(h=0,v=0)
+}
+
+```
+
+In contrast, new domestic autos show some slight correlation at finer scales (perhaps due to semiannual sales? or negotiations at the dealership?), but otherwise no correlation.
+
+```{r p-q correlations for new domestic autos}
+
+i <- 1
+
+# take the first differences (I don't see a particular reason to take logs, although Gencay et al. usually do)
+diffPri <- diff(log(priSeries$item[[i]]))
+diffQua <- diff(log(quaSeries$item[[i]]))
+  
+# make it a time series (for some reason I could never get it to come out a ts from the function)
+startYM <- as.character(startDate) # I'm sure there's a better way of doing this, but it works
+endYM <- as.character(endDate)
+  
+seriesPri <- ts(diffPri, start = c(substr(startYM, 1, 4), substr(startYM, 6, 7)), end = c(substr(endYM, 1, 4), substr(endYM, 6, 7)), freq = 12)
+seriesQua <- ts(diffQua, start = c(substr(startYM, 1, 4), substr(startYM, 6, 7)), end = c(substr(endYM, 1, 4), substr(endYM, 6, 7)), freq = 12)
+
+wf <- "la8"
+n <- length(seriesPri)
+J <- 6
+
+
+priModwt <- modwt(seriesPri, wf, n.levels = J)
+priModwt.bw <- brick.wall(priModwt, wf)
+
+quaModwt <- modwt(seriesQua, wf, n.levels = J)
+quaModwt.bw <- brick.wall(quaModwt, wf)
+
+# plot the MODWTs
+
+names(priModwt) <- c("2-4m", "4-8m", "8-16m", "16-32m", "32-64m", "64-128m", ">128m")
+par(mfcol=c(8,1), pty="m", mar=c(5-4,4,4-3,4))
+plot.ts(seriesPri, axes=FALSE, ylab="", main= paste0(priSeries$name[[i]], " ", "(monthly price change)"))
+for(x in 1:7){
+  plot.ts(priModwt[[x]], axes=FALSE, ylab=names(priModwt)[x])
+}
+
+names(quaModwt) <- c("2-4m", "4-8m", "8-16m", "16-32m", "32-64m", "64-128m", ">128m")
+par(mfcol=c(8,1), pty="m", mar=c(5-4,4,4-3,4))
+plot.ts(seriesQua, axes=FALSE, ylab="", main= paste0(priSeries$name[[i]], " ", "(monthly quantity change)"))
+for(x in 1:7){
+  plot.ts(quaModwt[[x]], axes=FALSE, ylab=names(quaModwt)[x])
+}
+
+# cross correlation
+
+lmax <- 36
+cross.cor <- NULL
+
+for(y in 1:J) {
+  scOutput <- spin.correlation(priModwt.bw[[y]], quaModwt.bw[[y]], lmax)
+  cross.cor <- cbind(cross.cor, scOutput)
+}
+
+cross.cor <- ts(as.matrix(cross.cor), start=-36, freq=1)
+
+dimnames(cross.cor) <- list(NULL, paste("Scale", 1:J))
+
+lags <- length(-lmax:lmax)
+
+# calculate 95% confidence intervals
+lower.ci <- tanh(atanh(cross.cor) - qnorm(0.975) / sqrt(matrix(trunc(n/2^(1:J)), nrow=lags, ncol=J, byrow=TRUE) - 3))
+upper.ci <- tanh(atanh(cross.cor) + qnorm(0.975) / sqrt(matrix(trunc(n/2^(1:J)), nrow=lags, ncol=J, byrow=TRUE) - 3))
+
+par(mfrow=c(2,1), las=1, pty="m", mar=c(2,4,1,2))
+
+for(i in J:1) {
+  plot(cross.cor[,i], ylim=c(-1,1), xaxt="n", xlab="Lag (months)",
+  ylab="", main = dimnames(cross.cor)[[2]][i])
+  axis(side=1, at=seq(-36, 36, by=12))
+  lines(lower.ci[,i], lty=1, col=2)
+  lines(upper.ci[,i], lty=1, col=2)
+  abline(h=0,v=0)
+}
+
+```
+
+Based on the above approach, the following code (not displayed in markdown) will build a table of price-quantity correlations for all items.
+
+I'll set the start date to Jan 1983.
+
+```{r p-q correlations for all items}
+
+coTable <- data.frame() # this will collect all the correlation information
+
+for(i in 1:length(priSeries$level)){  
+  
+  # take the first differences (I don't see a particular reason to take logs, although Gencay et al. usually do)
+  diffPri <- diff(log(priSeries$item[[i]]))
+  diffQua <- diff(log(quaSeries$item[[i]]))
+    
+  # make it a time series (for some reason I could never get it to come out a ts from the function)
+  startYM <- as.character(startDate) # I'm sure there's a better way of doing this, but it works
+  endYM <- as.character(endDate)
+    
+  seriesPri <- ts(diffPri, start = c(substr(startYM, 1, 4), substr(startYM, 6, 7)), end = c(substr(endYM, 1, 4), substr(endYM, 6, 7)), freq = 12)
+  seriesQua <- ts(diffQua, start = c(substr(startYM, 1, 4), substr(startYM, 6, 7)), end = c(substr(endYM, 1, 4), substr(endYM, 6, 7)), freq = 12)
+  
+  seriesQua
+  # do a basic regression between price and quantity
+  reg <- lm(seriesPri ~ seriesQua)
+  regSum <- summary(reg)
+  regBeta <- regSum$coefficients[2,1]
+  regSum$coefficients[2,4]
+  regP <- regSum$coefficients[2,4]
+  
+  # wavelet cross correlation analysis
+  
+  wf <- "la8"
+  n <- length(seriesPri)
+  J <- 6
+  
+  
+  priModwt <- modwt(seriesPri, wf, n.levels = J)
+  priModwt.bw <- brick.wall(priModwt, wf)
+  
+  quaModwt <- modwt(seriesQua, wf, n.levels = J)
+  quaModwt.bw <- brick.wall(quaModwt, wf)
+  
+  # cross correlation
+  
+  lmax <- 36
+  cross.cor <- NULL
+  
+  for(y in 1:(J+1)) {
+    scOutput <- spin.correlation(priModwt.bw[[y]], quaModwt.bw[[y]], lmax)
+    cross.cor <- cbind(cross.cor, scOutput)
+  }
+  
+  cross.cor <- ts(as.matrix(cross.cor), start=-36, freq=1)
+  
+  dimnames(cross.cor) <- list(NULL, paste("Scale", 1:(J+1)))
+  
+  lags <- length(-lmax:lmax)
+  
+  # calculate 95% confidence intervals
+  lower.ci <- tanh(atanh(cross.cor) - qnorm(0.975) / sqrt(matrix(trunc(n/2^(1:(J+1))), nrow=lags, ncol=J+1, byrow=TRUE) - 3))
+  upper.ci <- tanh(atanh(cross.cor) + qnorm(0.975) / sqrt(matrix(trunc(n/2^(1:(J+1))), nrow=lags, ncol=J+1, byrow=TRUE) - 3))
+
+  zeroTable <- NULL
+  lagTable <- NULL
+    
+  for (x in 1:(J+1)){
+      
+      # find correlation at zero lag, if cor != within 95% CI
+      #i <-5
+      zeroLagCor <- 0
+      if (lower.ci[37,x] > 0 | upper.ci[37,x] < 0){
+        
+        zeroLagCor <- cross.cor[37,x]
+        
+        # zero out all months around the zero lag so they don't get picked up as a lag 
+        z <- 1
+        while (z < 37){
+          if (lower.ci[37-z,x] > 0 | upper.ci[37-z,x] < 0){
+            cross.cor[37-z,x] <- 0
+          } else{ z <- 37 }     
+          z <- z + 1
+        }
+        z <- 1
+        while (z < 37){
+          if (lower.ci[37+z,x] > 0 | upper.ci[37+z,x] < 0){
+            cross.cor[37+z,x] <- 0
+          } else{ z <- 37 }        
+          z <- z + 1
+        }
+        
+      }
+      zeroTable <- rbind(zeroTable, c(x, zeroLagCor))
+      
+      # find highest lagged correlation where zero is outside of CI
+      hiLagCor <- 0
+      hiLagTime <- 0
+      #cross.cor <- cbind(cross.cor, 1:73)
+      
+      n1 <- n2 <- n3 <- 0
+      x1 <- x2 <- x3 <- 0
+      
+      which(upper.ci[-(37), x] < 0)
+      # find significant lags with negative correlations (but exclude the zero lag position)
+      n1 <- which(upper.ci[-(37), x] < 0) # positions in ci table
+      n2 <- which.min(cross.cor[n1, x]) # position of min from those positions
+      n3 <- cross.cor[n1[n2], x] # value
+      # find significant lags with positive correlations (but exclude the zero lag position)
+      x1 <- which(upper.ci[-(37), x] < 0) # positions in ci table
+      x2 <- which.min(cross.cor[x1, x]) # position of min from those positions
+      x3 <- cross.cor[x1[x2], x] # value
+
+      # determine which is bigger, the negative correlation or the positive
+      
+      if(length(n1) > 0 & length(x1) > 0){ # if we came up with both a positive and negative number, test for which is bigger
+        if(abs(x3) >= abs(n3)){ 
+          hiLagCor <- x3
+          hiLagTime <- x1[x2] - 37
+        } else{
+          hiLagCor <- n3
+          hiLagTime <- n1[n2] - 37
+        }
+      } else{ # if only one value came back, then use that one
+        if(length(n1) > 0){
+          hiLagCor <- n3
+          hiLagTime <- n1[n2] - 37
+        } else if(length(x1)) {
+          hiLagCor <- x3
+          hiLagTime <- x1[x2] - 37
+        }
+      }
+
+      lagTable <- rbind(lagTable, c(x, hiLagCor, hiLagTime))
+  }
+  
+  lagTable[!is.finite(lagTable)] <- 0
+  coTable <- rbind(coTable, c(priSeries$name[i], regBeta, regP, t(zeroTable[,2]), t(lagTable[,2]), t(lagTable[,3])))
+}
+
+output <- as.data.frame(coTable)
+output[ , 2:((3*J)+4)] <- apply(output[ ,2:((3*J)+4)], 2, function(x) as.numeric(as.character(x)))
+
+# name the columns
+colnames(output)[1:3] <- c("Item", "regBeta", "regP")
+for(i in 1:J){
+  colnames(output)[i+3] <- paste0("s", i, "Cor")
+  colnames(output)[(i)+4+J] <- paste0("s", i, "LagCor")
+  colnames(output)[(i)+5+J+J] <- paste0("s", i, "LagTime")
+
+}
+colnames(output)[4+J] <- "smoothCor"
+colnames(output)[5+J+J] <- "smoothLagCor"
+colnames(output)[6+J+J+J] <- "smoothLagTime"
+
+
+tableCors <- output[order(output$regP), 1:(4+J)]
+tableLags <- output[order(output$s1LagCor), -(2:(4+J))]
+
+
+#make the tables
+require(pander)
+panderOptions('table.split.table', Inf)
+panderOptions('digits', 6)
+panderOptions('round', 4)
+#pander(tableCors, style = 'rmarkdown')
+
+panderOptions('table.split.table', Inf)
+panderOptions('digits', 6)
+panderOptions('round', 4)
+#pander(tableLags, style = 'rmarkdown')
+
+```
+
+## Pandemic Inflation
+
+Lastly, and just for good measure, I'll calculate a couple basic metrics for the extent of inflation per item during the pandemic.  The following gives the percentage change in price for each item between January 2020 and the most recent month (currently Nov. 2021). Also, I'll calculate the % change in the average monthly price change from the 10 years prior to the pandemic and the average price change in the pandemic. Histograms are plotted, because who doesn't like a histogram, though I'm not presently comparing it to other periods. Also shown are the highest 10 items.
+
+```{r pandemic price change}
+
+ppc <- data.frame("Item" = priSeries$name, "Pan.Price.Pct.Chg" = 0)
+pad <- data.frame("Item" = priSeries$name, "Pan.Avg.Chg" = 0, "Pre.Pan.Avg.Chg" = 0)
+
+# calculate number of months between Feb 2020 (end of pre-pandemic) and end date of series
+d = round(as.numeric(difftime(as.Date(priSeries$endDate), as.Date("2020-02-01"), units ="days"))/(365.25/12))
+
+for (i in 1:length(priSeries$name)){
+
+    ppc[i, 2] <- ((priSeries$item[[i]][length(priSeries$item[[i]])] - priSeries$item[[i]][(length(priSeries$item[[i]]) - d +1)]) /
+      priSeries$item[[i]][(length(priSeries$item[[i]]) - d +1)]) * 100
+    
+    dp <- ((priSeries$item[[i]] - lag(priSeries$item[[i]])) / lag(priSeries$item[[i]])) * 100
+
+    avgPan <- mean(dp[(length(dp)-d+1):length(dp)]) 
+    avgPre <- mean(dp[(length(dp)-d-119):(length(dp)-d)]) 
+    
+    pad[i, 2] <- avgPan
+    pad[i, 3] <- avgPre
+}
+
+hist(ppc[,2], breaks = 25, main = "Percent Price Change from Jan 2020 to Most Recent Month (Nov 2021)")
+ppc <- ppc[order(ppc$Pan.Price.Pct.Chg),]
+ppc[180:217,]
+
+plot(ppc[,2], main = "% Price change during Pandemic")
+
+hist(pad[,2], breaks = 25, main = "% Change in Avg Monthly Change in Pandemic")
+pad <- pad[order(abs(pad$Pan.Avg.Chg)),]
+#pad[180:192,]
+
+hist(pad[,3], breaks = 25, main = "% Change in Avg Monthly Change in Decade before Pandemic")
+pad <- pad[order(abs(pad$Pre.Pan.Avg.Chg)),]
+#pad[180:192,]
+
+plot(pad[,2] ~ pad[,3], xlab = "Monthly Change Pre-Pandemic", ylab = "Monthly Change During Pandemic")
+abline(coef = c(0,1))
+
+```
+
+The items that have been making headlines are clear in the first metric, most notably the used car market. And within that the used auto margin (the difference between what dealers pay for used cars and what they charge).  Used light trucks is the same. Meats are also showing up, especially beef; but so are major household appliances.
+
+One point of interest is the negative side: government supplied food (school lunches, &c.) are registered with almost the exact same roughly 50% decline in prices. This is probably an anomaly of the survey method, but it's worth asking: how much is this depressing the headline inflation number?
+
+As for the second metric, You can see in the last plot (with the 45 degree line for parity) that points are clustered around the diagonal line, indicating that most items saw similar average monthly changes during the pandemic as they did in the decade prior, but also that the changes were usually modestly higher during than pre. But there are also outliers.  I'll look at those with ggplots below.
+
+## Build the Admin vs. Market Price Table
+
+Lastly, we'll build a table of all the items and whether they're classified as market or admin prices according to the different methods developed above. These are (for market prices)...
+
+* Energy of first two details >= 0.0004
+* Ratio of 1st to 5th detail energies >= 2
+
+In the table below for columns 2 and 3, 1 indicates market item, 0 indicates admin.
+
+Following that in the table are columns for the highest contemporaneous price-quantity correlation and the scale of that correlation, the same for lagged correlations, then the percentage price change between Jan. 2020 and the most recent available month (Nov. 2021), and lastly the price-quantity beta coefficient and p-value for the simple regression. The table is ordered according to the price change.
+
+```{r classification table}
+
+# sort the relevant tables by item name
+itemTable <- itemTable[order(itemTable$Item),]
+e1st2Scales <- e1st2Scales[order(e1st2Scales$Item),]
+eRatio1to5 <- eRatio1to5[order(eRatio1to5$Item),]
+tableCors <- tableCors[order(tableCors$Item),]
+tableLags <- tableLags[order(tableLags$Item),]
+ppc <- ppc[order(ppc$Item),]
+pad <- pad[order(pad$Item),]
+
+itemClass <- data.frame("Item" = itemTable$Item, "Category" = itemTable$Category, "Energy.1st.2.Details" = 0, 
+                        "Ratio.1st5th.Energies" = 0, "Highest.Cor" = 0, 
+                        "Scale.of.Highest.Cor" = 0, "Highest.Lag.Cor" = 0, 
+                        "Scale.of.Highest.Lag.Cor" = 0, "Lag.of.Highest.Lag.Cor" = 0, "Pan.Price.Chg" = ppc[,2],
+                        "Reg.Beta" = 0, "Reg.P" = 0, "Pan.Avg.Chg" = 0, "Pre.Pan.Avg.Chg" = 0, "d1Cor" = tableCors$s1Cor)
+
+for (i in 1:nrow(itemClass)){
+
+    # copy the energy stats
+  if(e1st2Scales$Energy[i] >= .0004){ itemClass[i, 3] = 1 }
+  if(eRatio1to5$Ratio[i] >= 2){ itemClass[i, 4] = 1 }  
+  
+  # find highest correlation from details (not including smooth)
+  x <- which.max(abs(tableCors[i,4:9]))
+  itemClass[i, 5] <- tableCors[i, x+3]
+  itemClass[i, 6] <- x
+  
+  # find highest lagged correlation from details (not including smooth)
+  x <- which.max(abs(tableLags[i,2:7]))
+  itemClass[i, 7] <- tableLags[i, x+1]
+  itemClass[i, 8] <- x
+  itemClass[i, 9] <- tableLags[i, x+8]
+
+  # copy pandemic price change
+  itemClass[i, 10] <- ppc[i, 2]
+  
+  # copy the simple regression stats
+  itemClass[i, 11] <- tableCors[i, 2]
+  itemClass[i, 12] <- tableCors[i, 3]
+  
+  # copy pandemic avg price change change
+  itemClass[i, 13] <- pad[i, 2]
+  itemClass[i, 14] <- pad[i, 3]
+}
+
+itemClass <- itemClass[order(abs(itemClass$Pan.Price.Chg)),]
+
+panderOptions('table.split.table', Inf)
+panderOptions('digits', 6)
+panderOptions('round', 4)
+#pander(itemClass, style = 'rmarkdown')
+
+```
+
+## Categorizing Administered vs. Market Prices
+
+First, I'll check to see how the price-quantity correlation compares to the simple regression P-value
+
+```{r p-value vs wavelet correlation}
+
+ggplot(itemClass, aes(x = abs(Highest.Cor), y = Reg.P, color = Reg.Beta)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(itemClass$Item, 1, 15), 
+      #nudge_x = 0.05, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+    ylim(0, 0.05) +
+    ggtitle("P-value of P-Q Regression Coeff vs. Highest Wavelet Correlation")
+
+#length(itemClass$Reg.P[itemClass$Reg.P < 0.01])
+#length(itemClass$Highest.Cor[abs(itemClass$Highest.Cor) > 0.8])
+
+```
+
+Interestingly, the two don't match up as much as I would have expected.  In fact, while `r length(itemClass$Reg.P[itemClass$Reg.P < 0.01])` of the 192 items have p-values of less than 0.01 associated with the beta coefficient of the regression, only `r length(itemClass$Highest.Cor[abs(itemClass$Highest.Cor) > 0.8])` have correlations greater than 0.8 in the wavelet scale with the highest correlation.  Of course, the regression results are rudimentary, but this calls for further methodological study in any case.
+
+The following compares the energy of the first two scales and the 1st to 5th scale ratio to the highest correlation.
+
+```{r energy metrics vs wavelet correlation}
+
+ggplot(itemClass, aes(x = abs(Highest.Cor), y = Energy.1st.2.Details, color = Scale.of.Highest.Cor)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    ggtitle("Energy of First Two Scales vs. Highest Wavelet Correlation")
+
+ggplot(itemClass, aes(x = abs(Highest.Cor), y = Ratio.1st5th.Energies, color = Scale.of.Highest.Cor)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    ggtitle("d1 to d5 ratio vs. Highest Wavelet Correlation")
+
+#length(itemClass$Reg.P[itemClass$Reg.P < 0.01])
+#length(itemClass$Highest.Cor[abs(itemClass$Highest.Cor) > 0.8])
+
+```
+
+Well, that's not the best way to plot that, but for now it's good enough to make me think the energy approach isn't very useful.
+
+All in all, I think the price-quantity approach is best suited for distinguishing market from administered prices, though energy could useful in related analyses. It's worth noting, though, that to the extent that the low-scale (i.e. high frequency energies) don't tell us much, this would suggest that the traditional approach of counting months with zero price change is probably also not a very sound method. 
+
+In fact, the wavelet method in general suggests a more suitable approach, as it allows for recognition of price changes at different frequencies, which itself is similar to the traditional approach, but with more detailed information about those frequencies.  That is, whereas the traditional approach can only tell us how frequently there is _no_ price change, the wavelet approach can tell us, e.g., how much or how little _frequent_ price changes (say in the 2-4 month range) makes up the total of price volatility. It seems to me that this is at least as sound an approach as the traditional approach, plus it lends additional information. For instance, prices may change at a lower frequency reflecting, planning processes of the price administrators (though it must also be noted that price changes at higher frequency may also reflect those planning processes--e.g. temporary sales).
+
+## Administered vs. Market Prices and the Pandemic Inflation
+
+I want to do a quick check of the pandemic price change against price-quantity correlation.  Here's a plot, along with some zooms of the same:
+
+```{r plot p-q cor against pandemic price change}
+
+ggplot(itemClass, aes(x = Highest.Cor, y = Pan.Price.Chg, color = Scale.of.Highest.Cor, shape = Category)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(itemClass$Item, 1, 15), 
+      nudge_x = 0.05, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+    ggtitle("1. Full")
+
+ggplot(itemClass, aes(x = Highest.Cor, y = Pan.Price.Chg, color = Scale.of.Highest.Cor, shape = Category)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(itemClass$Item, 1, 15), 
+      nudge_x = 0, nudge_y = 1.5, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+    xlim(-1, -.2) + ylim(0, 60) +
+    ggtitle("2. Top Left Zoom")
+
+ggplot(itemClass, aes(x = Highest.Cor, y = Pan.Price.Chg, color = Scale.of.Highest.Cor, shape = Category)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(itemClass$Item, 1, 15), 
+      nudge_x = 0, nudge_y = -0.8, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+    xlim(-1, -.8) + ylim(0, 30) +
+    ggtitle("3. Far Left Zoom")
+
+ggplot(itemClass, aes(x = Highest.Cor, y = Pan.Price.Chg, color = Scale.of.Highest.Cor, shape = Category)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(itemClass$Item, 1, 15), 
+      nudge_x = 0.01, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+    xlim(-0.05, 0.99) + ylim(-10, 20) +
+    ggtitle("4. Positive Correlation Items")
+
+ggplot(itemClass, aes(x = Highest.Cor, y = Pan.Price.Chg, color = Scale.of.Highest.Cor, shape = Category)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(itemClass$Item, 1, 15), 
+      nudge_x = 0.01, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+    xlim(-0.05, 0.05) + ylim(2, 13) +
+    ggtitle("5. Zero Correlation Items")
+
+ggplot(itemClass, aes(x = Highest.Cor, y = Pan.Price.Chg, color = Scale.of.Highest.Cor, shape = Category)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(itemClass$Item, 1, 15), 
+      nudge_x = 0.03, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+    xlim(-1, -.2) + ylim(-25, 5) +
+    ggtitle("6. Bottom Left Zoom")
+
+dur <- itemClass[itemClass$Category == "Durable Good",]
+
+ggplot(itemClass[itemClass$Category == "Durable Good",], aes(x = Highest.Cor, y = Pan.Price.Chg, color = Scale.of.Highest.Cor, shape = Category)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(itemClass[itemClass$Category == "Durable Good", 1], 1, 15), 
+      nudge_x = 0.003, nudge_y = -1, 
+      check_overlap = F,
+      size = 3
+    ) +
+    xlim(-0.33, 0.01) + ylim(-2, 80) +
+    ggtitle("7. Autos")
+
+
+```
+
+[Note: the analysis below refers to the original correlation numbers, which were run on the longer dataset.  These have changed now that we're only selecting from 1983 on.]
+
+The horizontal axis alone is kind of interesting: items with higher correlations tend to have those correlations at coarser scales (lower frequency). An argument could be made that the only proper market prices are those with high correlations at finer scales (i.e. the darker colored dots that are also toward the left or right extremes on the above plots), although as noted earlier, this could also reflect sales among administered price items.
+
+More generally, nothing in the plots above jumps out at me as showing that the inflation is either the result of market prices alone, or administered prices generally.  Rather, it looks like _certain_ items have seen particularly high inflation (which is consistent with what many have been reporting), including especially used car dealerships, meat processors, and household appliance producers. This perspective does beg additional questions, though. For instance, the price rise for processed and fresh fruits has been about the same, despite the latter clearly be more market-priced and the former more administered; so what's going on with meat? 
+
+And, of course, what's going on with used cars. Plot 7. above shows most of them.  Note that new domestic autos have some p-q correlation (foreign autos do not), and the used auto margin falls in between (although net transactions in used autos and used light trucks have greater correlations); yet the inflation for new autos has been on the high end of the cluster of most items, but nowhere near where the used autos are. That demands an explanation, and I have trouble saying it's all chip shortages (but...maybe?).
+
+Lastly, of course, this is just one way to look at the pandemic inflation. We'll develop others (including the difference-in-difference approach), and I think compare those results simply to the correlations values we're looking at above.
+
+Here's the plot using the other metric for the pandemic inflation (% change in average monthly price changes, pandemic vs. decade prior):
+
+(Note: wine is way off the scale so it's been removed from view)
+
+```{r plot p-q cor against pandemic change in avg price changes}
+
+ggplot(itemClass, aes(x = Highest.Cor, y = (100 * (Pan.Avg.Chg - Pre.Pan.Avg.Chg) / Pre.Pan.Avg.Chg), color = Scale.of.Highest.Cor, shape = Category)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(itemClass$Item, 1, 15), 
+      nudge_x = 0.05, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+    ylim(-5000, 5000) +
+    ggtitle("0. Full (Not Abs Val)")
+
+ggplot(itemClass, aes(x = Highest.Cor, y = abs((100 * (Pan.Avg.Chg - Pre.Pan.Avg.Chg) / Pre.Pan.Avg.Chg)), color = Scale.of.Highest.Cor, shape = Category)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(itemClass$Item, 1, 15), 
+      nudge_x = 0.05, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+    ylim(0, 5000) +
+    ggtitle("1. Full")
+
+ggplot(itemClass, aes(x = Highest.Cor, y = abs((100 * (Pan.Avg.Chg - Pre.Pan.Avg.Chg) / Pre.Pan.Avg.Chg)), color = Scale.of.Highest.Cor, shape = Category)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(itemClass$Item, 1, 15), 
+      nudge_x = 0.05, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+    ylim(0, 3000) +
+    xlim(-1, 0) +
+    ggtitle("2. Left")
+
+ggplot(itemClass, aes(x = Highest.Cor, y = abs((100 * (Pan.Avg.Chg - Pre.Pan.Avg.Chg) / Pre.Pan.Avg.Chg)), color = Scale.of.Highest.Cor, shape = Category)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(itemClass$Item, 1, 15), 
+      nudge_x = 0.05, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+    ylim(0, 2500) +
+    xlim(-0.01, 1) +
+    ggtitle("3. Right")
+
+ggplot(itemClass, aes(x = Highest.Cor, y = abs((100 * (Pan.Avg.Chg - Pre.Pan.Avg.Chg) / Pre.Pan.Avg.Chg)), color = Scale.of.Highest.Cor, shape = Category)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(itemClass$Item, 1, 15), 
+      nudge_x = 0.005, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+    ylim(0, 1000) +
+    xlim(-1, -0.5) +
+    ggtitle("4. Far Left")
+
+```
+
+And one more pass to look at the average monthly price change pre- versus during pandemic.  Average monthly change in price in the decade prior to the pandemic is on the x axis, and during the pandemic is on the y axis.  The color reflects the correlation between price and quantity at the finest (2-4 month) scale.
+
+```{r plot pre versus post pandemic price change}
+
+ggplot(itemClass, aes(x = Pre.Pan.Avg.Chg, y = Pan.Avg.Chg, color = d1Cor, shape = Category)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(itemClass$Item, 1, 15), 
+      nudge_x = 0.005, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+#    ylim(0, 1000) +
+#    xlim(-1, -0.5) +
+    ggtitle("1. Full") +
+    geom_abline(intercept = 0, slope = 1)
+
+ggplot(itemClass, aes(x = Pre.Pan.Avg.Chg, y = Pan.Avg.Chg, color = d1Cor, shape = Category)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(itemClass$Item, 1, 15), 
+      nudge_x = 0.005, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+    ylim(-1.2, 2.6) +
+    xlim(-0.75, 0.75) +
+    ggtitle("2. Zoom") +
+    geom_abline(intercept = 0, slope = 1)
+
+ggplot(itemClass, aes(x = Pre.Pan.Avg.Chg, y = Pan.Avg.Chg, color = d1Cor, shape = Category)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(itemClass$Item, 1, 15), 
+      nudge_x = 0.005, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+    ylim(-0.5, 2.2) +
+    xlim(-0.2, 0.4) +
+    ggtitle("3. Zoom More") +
+    geom_abline(intercept = 0, slope = 1)
+
+```
+
+Here's the same thing but with color reflecting highest correlation value.
+
+
+```{r plot pre versus post pandemic price change 2}
+
+ggplot(itemClass, aes(x = Pre.Pan.Avg.Chg, y = Pan.Avg.Chg, color = abs(Highest.Cor), shape = Category)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(itemClass$Item, 1, 15), 
+      nudge_x = 0.005, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+#    ylim(0, 1000) +
+#    xlim(-1, -0.5) +
+    ggtitle("1. Full") +
+    geom_abline(intercept = 0, slope = 1)
+
+ggplot(itemClass, aes(x = Pre.Pan.Avg.Chg, y = Pan.Avg.Chg, color = abs(Highest.Cor), shape = Category)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(itemClass$Item, 1, 15), 
+      nudge_x = 0.005, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+    ylim(-1.2, 2.6) +
+    xlim(-0.75, 0.75) +
+    ggtitle("2. Zoom") +
+    geom_abline(intercept = 0, slope = 1)
+
+ggplot(itemClass, aes(x = Pre.Pan.Avg.Chg, y = Pan.Avg.Chg, color = abs(Highest.Cor), shape = Category)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(itemClass$Item, 1, 15), 
+      nudge_x = 0.005, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+    ylim(-0.5, 2.2) +
+    xlim(-0.2, 0.4) +
+    ggtitle("3. Zoom More") +
+    geom_abline(intercept = 0, slope = 1)
+
+```
+
+
+Here's the same thing but with color reflecting highest correlation value, only showing items with |highest correlation| > 0.5.
+
+
+```{r plot pre versus post pandemic price change 3}
+
+ic <- itemClass[abs(itemClass$Highest.Cor) > 0.5,]
+
+ggplot(ic, aes(x = Pre.Pan.Avg.Chg, y = Pan.Avg.Chg, color = abs(Highest.Cor), shape = Category)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(ic$Item, 1, 15), 
+      nudge_x = 0.005, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+#    ylim(0, 1000) +
+#    xlim(-1, -0.5) +
+    ggtitle("1. Full") +
+    geom_abline(intercept = 0, slope = 1)
+
+ggplot(ic, aes(x = Pre.Pan.Avg.Chg, y = Pan.Avg.Chg, color = abs(Highest.Cor), shape = Category)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(ic$Item, 1, 15), 
+      nudge_x = 0.005, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+    ylim(-1.2, 2.6) +
+    xlim(-0.75, 0.75) +
+    ggtitle("2. Zoom") +
+    geom_abline(intercept = 0, slope = 1)
+
+ggplot(ic, aes(x = Pre.Pan.Avg.Chg, y = Pan.Avg.Chg, color = abs(Highest.Cor), shape = Category)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(ic$Item, 1, 15), 
+      nudge_x = 0.005, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+    ylim(-0.5, 2.2) +
+    xlim(-0.2, 0.4) +
+    ggtitle("3. Zoom More") +
+    geom_abline(intercept = 0, slope = 1)
+
+```
+
+And the same again, but with correlations <= 0.5
+
+```{r plot pre versus post pandemic price change 4}
+
+ic <- itemClass[ abs(itemClass$Highest.Cor) <= 0.5,]
+
+ggplot(ic, aes(x = Pre.Pan.Avg.Chg, y = Pan.Avg.Chg, color = abs(Highest.Cor), shape = Category)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(ic$Item, 1, 15), 
+      nudge_x = 0.005, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+#    ylim(0, 1000) +
+#    xlim(-1, -0.5) +
+    ggtitle("1. Full") +
+    geom_abline(intercept = 0, slope = 1)
+
+ggplot(ic, aes(x = Pre.Pan.Avg.Chg, y = Pan.Avg.Chg, color = abs(Highest.Cor), shape = Category)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(ic$Item, 1, 15), 
+      nudge_x = 0.005, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+    ylim(-1.2, 2.6) +
+    xlim(-0.75, 0.75) +
+    ggtitle("2. Zoom") +
+    geom_abline(intercept = 0, slope = 1)
+
+ggplot(ic, aes(x = Pre.Pan.Avg.Chg, y = Pan.Avg.Chg, color = abs(Highest.Cor), shape = Category)) + 
+    geom_point() +
+    theme(legend.position="bottom") +
+    geom_text(
+      label=substr(ic$Item, 1, 15), 
+      nudge_x = 0.005, nudge_y = -0.1, 
+      check_overlap = F,
+      size = 1.5
+    ) +
+    ylim(-0.5, 2.2) +
+    xlim(-0.2, 0.4) +
+    ggtitle("3. Zoom More") +
+    geom_abline(intercept = 0, slope = 1)
+
+```
+
+A couple initial observations: the cluster of the low correlation items (last set of plots) seem to span a bit wider range of pre-pandemic monthly changes (about 0 to 0.4 versus 0 to 0.25 for high correlation items), but the high correlation items have quite a few items with pre-pandemic price drops (versus almost none for low correlation items).  Generally, the low correlation items are more tightly clustered.  This is unsurprising if we take low correlation as an indication of administered prices and predict from that that prices will be more stable.  
+
+Another takeaway is that we're clearly dealing with outlier items causing the inflation.  Most items, especially the low correlation items (as expected), are pretty close to each other in terms of their pandemic price changes.  The exceptions are obvious.  But it's worth noting that there are some that might be missed without close inspection.  Specifically, e.g., televisions have remained roughly the same price over the pandemic, _but_ prior to the pandemic their prices were dropping fairly rapidly. 
+
