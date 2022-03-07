@@ -81,9 +81,9 @@ rm(list = ls())
 
 # import the tables
 
-expenditures <- read.csv("243U.csv", header = F, na.strings = "---")
+expenditures <- read.csv("245U.csv", header = F, na.strings = "---")
 prices <- read.csv("244U.csv", header = F, na.strings = "---")
-quantities <- read.csv("245U.csv", header = F, na.strings = "---")
+quantities <- read.csv("243U.csv", header = F, na.strings = "---")
 
 # format expenditures tables
 
@@ -277,10 +277,10 @@ priSeries <- makeTimeSeries(pri)
 i <- 130
 
 # make it a time series (for some reason I could never get it to come out a ts from the function)
-series <- ts(quaSeries$item[i], start = as.numeric(substr(quaSeries$startDate, 1, 4)), end = as.numeric(substr(quaSeries$endDate, 1, 4)), freq = 12)
+series <- ts(priSeries$item[i], start = as.numeric(substr(priSeries$startDate, 1, 4)), end = as.numeric(substr(priSeries$endDate, 1, 4)), freq = 12)
 
 # plot the series
-plot(series, main = quaSeries$name[i], ylab = "Price")
+plot(series, main = priSeries$name[i], ylab = "Price")
 
 ```
 
